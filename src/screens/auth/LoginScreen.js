@@ -7,151 +7,196 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
-  Alert,
   SafeAreaView,
+  Image,
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
+import CustomTextInput from '../../components/forms/TextInput';
+import PrimaryButton from '../../components/common/PrimaryButton';
+import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
+import COLORS from '../../style/colors';
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('demo@minimals.cc');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-    
-    // TODO: Implement login logic
-    console.log('Login attempt:', { email, password });
-    Alert.alert('Success', 'Login functionality to be implemented');
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to Fuugohub</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        {/* Logo and Title */}
+        <Image source={require('../../assets/images/login-logo.png')} style={styles.logo} resizeMode="contain" />
         
+
+        {/* Headings */}
+        <Text style={styles.heading}>Sign in to your account</Text>
+        <Text style={styles.subtext}>
+          Sign in to explore short videos, grow your audience, and run your own shop — all from one powerful platform.
+        </Text>
+
+        {/* Form */}
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
+          <CustomTextInput
+            label="Email address"
             value={email}
             onChangeText={setEmail}
+            placeholder="Email address"
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
+          <CustomTextInput
+            label="Password"
             value={password}
             onChangeText={setPassword}
+            placeholder="6+ characters"
             secureTextEntry
           />
-          
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Login</Text>
+          <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.forgotPassword}
-            onPress={() => navigation.navigate('ForgotPassword')}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-          
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.registerLink}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
+          <PrimaryButton
+            title="Sign in"
+            onPress={() => {}}
+            style={styles.signInButton}
+            textStyle={styles.signInButtonText}
+          />
         </View>
-      </View>
+
+        {/* Divider and Social */}
+        <View style={styles.dividerRow}>
+          <View style={styles.divider} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.divider} />
+        </View>
+        <View style={styles.socialRow}>
+          <TouchableOpacity>
+            <Image source={require('../../assets/images/google-icon.png')} style={styles.socialIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image source={require('../../assets/images/facebook-icon.png')} style={styles.socialIcon} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Continue as a <Text style={styles.guestText}>Guest</Text>
+          </Text>
+          <Text style={styles.footerText}>
+            Don't have an account?{' '}
+            <Text style={styles.signupText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
+    flexGrow: 1,
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#fff',
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+  logo: {
+    width: 192,
+    height: 44.5,
+    marginTop: 12,
+    marginBottom: 8,
   },
-  title: {
-    fontSize: 28,
+  brand: {
+    fontSize: 32,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#333',
+    color: '#222',
+    marginBottom: 18,
+    letterSpacing: 0.5,
   },
-  subtitle: {
-    fontSize: 16,
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#222',
     textAlign: 'center',
-    marginBottom: 30,
-    color: '#666',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  subtext: {
+    fontSize: 16,
+    color: '#7a869a',
+    textAlign: 'center',
+    marginBottom: 28,
+    lineHeight: 22,
   },
   form: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  loginButton: {
-    backgroundColor: '#f4511e',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  loginButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    width: '100%',
+    marginBottom: 18,
   },
   forgotPassword: {
-    alignItems: 'center',
-    marginTop: 15,
+    alignSelf: 'flex-end',
+    marginBottom: 18,
   },
   forgotPasswordText: {
-    color: '#f4511e',
-    fontSize: 14,
+    color: COLORS.textPrimary,
+    fontWeight: '400',
+    fontSize: 15,
   },
-  registerContainer: {
+  signInButton: {
+    marginTop: 0,
+    marginBottom: 10,
+    width: '100%',
+  },
+  signInButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginVertical: 18,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#e5eaf2',
+  },
+  orText: {
+    marginHorizontal: 12,
+    color: '#7a869a',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  socialRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    width: '100%',
+    marginBottom: 30,
   },
-  registerText: {
-    color: '#666',
-    fontSize: 14,
+  socialIcon: {
+    width: 36,
+    height: 36,
+    marginHorizontal: 12,
   },
-  registerLink: {
-    color: '#f4511e',
-    fontSize: 14,
+  footer: {
+    alignItems: 'center',
+    marginTop: 18,
+  },
+  footerText: {
+    color: '#7a869a',
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  guestText: {
+    color: '#f25b7c',
+    fontWeight: 'bold',
+  },
+  signupText: {
+    color: '#f25b7c',
     fontWeight: 'bold',
   },
 });

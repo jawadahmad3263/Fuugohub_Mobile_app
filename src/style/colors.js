@@ -42,6 +42,10 @@ export const COLORS = {
   
   // Shadow Colors
   shadow: '#000000',
+
+  // text
+  textPrimary: '#1C252E',
+  
 };
 
 export default COLORS; 
