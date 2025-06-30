@@ -3,7 +3,7 @@
  * User authentication login screen
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -16,38 +16,55 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-} from 'react-native';
-import CustomTextInput from '../../components/forms/TextInput';
-import PrimaryButton from '../../components/common/PrimaryButton';
-import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
-import COLORS from '../../style/colors';
-import Style from '../../style/Style';
-import Spacing from '../../components/common/Spacing';
- 
+} from "react-native";
+import CustomTextInput from "../../components/forms/TextInput";
+import PrimaryButton from "../../components/common/PrimaryButton";
+import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedExports";
+import COLORS from "../../style/colors";
+import Style from "../../style/Style";
+import Spacing from "../../components/common/Spacing";
+
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('demo@minimals.cc');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("demo@minimals.cc");
+  const [password, setPassword] = useState("");
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+          >
             {/* Logo and Title */}
-            <Image source={require('../../assets/images/login-logo.png')} style={styles.logo} resizeMode="contain" />
-            
+            <Image
+              source={require("../../assets/images/login-logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
+            <Spacing type="v" val={10} />
             {/* Headings */}
-            <Text style={styles.heading}>Sign in to your account</Text>
-            <Spacing type='v' val={10} />
-            <Text style={[Style.font12, Style.textSecondary, Style.textCenter]}>
-              Sign in to explore short videos, grow your audience, and run your own shop — all from one powerful platform.
+            <Text
+              style={[
+                Style.font18,
+                Style.textPrimary,
+                Style.textCenter,
+                Style.bold,
+              ]}
+            >
+              Sign in to your account
             </Text>
-            <Spacing type='v' val={30} />
+            <Spacing type="v" val={10} />
+            <Text style={[Style.font12, Style.textSecondary, Style.textCenter]}>
+              Sign in to explore short videos, grow your audience, and run your
+              own shop — all from one powerful platform.
+            </Text>
+            <Spacing type="v" val={30} />
             {/* Form */}
             <View style={styles.form}>
               <CustomTextInput
@@ -65,7 +82,10 @@ const LoginScreen = ({ navigation }) => {
                 placeholder="6+ characters"
                 secureTextEntry
               />
-              <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
+              <TouchableOpacity
+                style={styles.forgotPassword}
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
                 <Text style={styles.forgotPasswordText}>Forgot password?</Text>
               </TouchableOpacity>
               <PrimaryButton
@@ -82,25 +102,35 @@ const LoginScreen = ({ navigation }) => {
               <Text style={styles.orText}>OR</Text>
               <View style={styles.divider} />
             </View>
-            <Spacing type='v' val={20} />
+            <Spacing type="v" val={20} />
             <View style={styles.socialRow}>
               <TouchableOpacity>
-                <Image source={require('../../assets/images/google-icon.png')} style={styles.socialIcon} />
+                <Image
+                  source={require("../../assets/images/google-icon.png")}
+                  style={styles.socialIcon}
+                />
               </TouchableOpacity>
               <TouchableOpacity>
-                <Image source={require('../../assets/images/facebook-icon.png')} style={styles.socialIcon} />
+                <Image
+                  source={require("../../assets/images/facebook-icon.png")}
+                  style={styles.socialIcon}
+                />
               </TouchableOpacity>
             </View>
 
-          
             {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>
                 Continue as a <Text style={styles.guestText}>Guest</Text>
               </Text>
               <Text style={styles.footerText}>
-                Don't have an account?{' '}
-                <Text style={styles.signupText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
+                Don't have an account?{" "}
+                <Text
+                  style={styles.signupText}
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  Sign Up
+                </Text>
               </Text>
             </View>
           </ScrollView>
@@ -113,13 +143,13 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   container: {
     flexGrow: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   logo: {
     width: 192,
@@ -129,69 +159,69 @@ const styles = StyleSheet.create({
   },
   brand: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#222',
+    fontWeight: "bold",
+    color: "#222",
     marginBottom: 18,
     letterSpacing: 0.5,
   },
   heading: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#222',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#222",
+    textAlign: "center",
     marginBottom: 8,
     marginTop: 8,
   },
   subtext: {
     fontSize: 12,
     color: COLORS.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 28,
     lineHeight: 22,
   },
   form: {
-    width: '100%',
+    width: "100%",
     marginBottom: 18,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 18,
   },
   forgotPasswordText: {
     color: COLORS.textPrimary,
-    fontWeight: '400',
+    fontWeight: "400",
     fontSize: 15,
   },
   signInButton: {
     marginTop: 0,
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
   },
   signInButtonText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     marginVertical: 18,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: '#e5eaf2',
+    backgroundColor: "#e5eaf2",
   },
   orText: {
     marginHorizontal: 12,
-    color: '#7a869a',
-    fontWeight: 'bold',
+    color: "#7a869a",
+    fontWeight: "bold",
     fontSize: 15,
   },
   socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
     marginBottom: 30,
   },
   socialIcon: {
@@ -200,12 +230,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   footer: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
     marginTop: 18,
-    flex:1,
+    flex: 1,
     // backgroundColor: 'red',
-  
   },
   footerText: {
     color: COLORS.textSecondary,
@@ -214,12 +243,12 @@ const styles = StyleSheet.create({
   },
   guestText: {
     color: COLORS.textOrange,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   signupText: {
     color: COLORS.textOrange,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
-export default LoginScreen; 
+export default LoginScreen;
