@@ -12,83 +12,100 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import CustomTextInput from '../../components/forms/TextInput';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
 import COLORS from '../../style/colors';
-
+import Style from '../../style/Style';
+import Spacing from '../../components/common/Spacing';
+ 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('demo@minimals.cc');
   const [password, setPassword] = useState('');
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Logo and Title */}
-        <Image source={require('../../assets/images/login-logo.png')} style={styles.logo} resizeMode="contain" />
-        
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+            {/* Logo and Title */}
+            <Image source={require('../../assets/images/login-logo.png')} style={styles.logo} resizeMode="contain" />
+            
 
-        {/* Headings */}
-        <Text style={styles.heading}>Sign in to your account</Text>
-        <Text style={styles.subtext}>
-          Sign in to explore short videos, grow your audience, and run your own shop — all from one powerful platform.
-        </Text>
+            {/* Headings */}
+            <Text style={styles.heading}>Sign in to your account</Text>
+            <Spacing type='v' val={10} />
+            <Text style={[Style.font12, Style.textSecondary, Style.textCenter]}>
+              Sign in to explore short videos, grow your audience, and run your own shop — all from one powerful platform.
+            </Text>
+            <Spacing type='v' val={30} />
+            {/* Form */}
+            <View style={styles.form}>
+              <CustomTextInput
+                label="Email address"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Email address"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <CustomTextInput
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="6+ characters"
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+              </TouchableOpacity>
+              <PrimaryButton
+                title="Sign in"
+                onPress={() => {}}
+                style={styles.signInButton}
+                textStyle={styles.signInButtonText}
+              />
+            </View>
 
-        {/* Form */}
-        <View style={styles.form}>
-          <CustomTextInput
-            label="Email address"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Email address"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <CustomTextInput
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="6+ characters"
-            secureTextEntry
-          />
-          <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
-            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-          </TouchableOpacity>
-          <PrimaryButton
-            title="Sign in"
-            onPress={() => {}}
-            style={styles.signInButton}
-            textStyle={styles.signInButtonText}
-          />
-        </View>
+            {/* Divider and Social */}
+            <View style={styles.dividerRow}>
+              <View style={styles.divider} />
+              <Text style={styles.orText}>OR</Text>
+              <View style={styles.divider} />
+            </View>
+            <Spacing type='v' val={20} />
+            <View style={styles.socialRow}>
+              <TouchableOpacity>
+                <Image source={require('../../assets/images/google-icon.png')} style={styles.socialIcon} />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Image source={require('../../assets/images/facebook-icon.png')} style={styles.socialIcon} />
+              </TouchableOpacity>
+            </View>
 
-        {/* Divider and Social */}
-        <View style={styles.dividerRow}>
-          <View style={styles.divider} />
-          <Text style={styles.orText}>OR</Text>
-          <View style={styles.divider} />
-        </View>
-        <View style={styles.socialRow}>
-          <TouchableOpacity>
-            <Image source={require('../../assets/images/google-icon.png')} style={styles.socialIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image source={require('../../assets/images/facebook-icon.png')} style={styles.socialIcon} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Continue as a <Text style={styles.guestText}>Guest</Text>
-          </Text>
-          <Text style={styles.footerText}>
-            Don't have an account?{' '}
-            <Text style={styles.signupText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
-          </Text>
-        </View>
-      </ScrollView>
+          
+            {/* Footer */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>
+                Continue as a <Text style={styles.guestText}>Guest</Text>
+              </Text>
+              <Text style={styles.footerText}>
+                Don't have an account?{' '}
+                <Text style={styles.signupText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
+              </Text>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -126,8 +143,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   subtext: {
-    fontSize: 16,
-    color: '#7a869a',
+    fontSize: 12,
+    color: COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: 28,
     lineHeight: 22,
@@ -184,19 +201,23 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginTop: 18,
+    flex:1,
+    // backgroundColor: 'red',
+  
   },
   footerText: {
-    color: '#7a869a',
+    color: COLORS.textSecondary,
     fontSize: 16,
     marginBottom: 4,
   },
   guestText: {
-    color: '#f25b7c',
+    color: COLORS.textOrange,
     fontWeight: 'bold',
   },
   signupText: {
-    color: '#f25b7c',
+    color: COLORS.textOrange,
     fontWeight: 'bold',
   },
 });

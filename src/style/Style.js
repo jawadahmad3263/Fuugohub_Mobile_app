@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import COLORS from './colors';
 
 const Style = StyleSheet.create({
   // Flex directions
@@ -117,6 +118,14 @@ const Style = StyleSheet.create({
   },
   textRight: {
     textAlign: 'right',
+  },
+
+  // text color
+  textPrimary: {
+    color: COLORS.textPrimary,
+  },
+  textSecondary: {
+    color: COLORS.textSecondary,
   },
 
 

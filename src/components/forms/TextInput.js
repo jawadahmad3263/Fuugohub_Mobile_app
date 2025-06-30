@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput as RNTextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput as RNTextInput, StyleSheet, Animated, TouchableOpacity, Image, Platform } from 'react-native';
+import COLORS from '../../style/colors';
 
 const CustomTextInput = ({
   label,
@@ -14,32 +15,73 @@ const CustomTextInput = ({
   inputStyle,
   ...props
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const animatedIsFocused = useRef(new Animated.Value(value ? 1 : 0)).current;
   const isPassword = secureTextEntry;
+
+  React.useEffect(() => {
+    Animated.timing(animatedIsFocused, {
+      toValue: isFocused || value ? 1 : 0,
+      duration: 180,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused, value]);
+
+  const labelStyle = {
+    position: 'absolute',
+    left: 16,
+    top: animatedIsFocused.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, -10],
+    }),
+    fontSize: animatedIsFocused.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, 13],
+    }),
+    color: COLORS.textSecondary,
+    backgroundColor: '#fff',
+    paddingHorizontal: 4,
+    zIndex: 2,
+    fontWeight: '600',
+  };
 
   return (
     <View style={[styles.container, style]}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputWrapper}>
+      {label && (
+        <Animated.Text style={labelStyle} pointerEvents="none">
+          {label}
+        </Animated.Text>
+      )}
+      <View
+        style={[
+          styles.inputWrapper,
+          {
+            borderColor: isFocused ? COLORS.border : COLORS.border,
+            borderWidth: 1,
+          },
+        ]}
+      >
         <RNTextInput
-          style={[styles.input, inputStyle]}
+          style={[styles.input, inputStyle, Platform.OS === 'web' && { outlineWidth: 0 }]}
           value={value}
           onChangeText={onChangeText}
-          placeholder={placeholder}
-          secureTextEntry={isPassword && !showPassword}
+          placeholder={isFocused ? placeholder : ''}
+          secureTextEntry={isPassword && !isFocused}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           placeholderTextColor="#b0b7c3"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           {...props}
         />
         {isPassword && (
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => setShowPassword((prev) => !prev)}
+            onPress={() => setIsFocused((prev) => !prev)}
             activeOpacity={0.7}
           >
             {/* <Image
-              source={showPassword ? require('../../assets/images/eye-off.png') : require('../../assets/images/eye.png')}
+              source={isFocused ? require('../../assets/images/eye-off.png') : require('../../assets/images/eye.png')}
               style={styles.icon}
               resizeMode="contain"
             /> */}
@@ -57,28 +99,23 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 18,
   },
-  label: {
-    fontSize: 15,
-    color: '#6c7685',
-    marginBottom: 6,
-    fontWeight: '600',
-  },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#e5eaf2',
+    borderRadius:8,
+    borderWidth: 2,
+    borderColor: '#8a99a8',
     paddingHorizontal: 16,
     paddingVertical: 0,
-    minHeight: 56,
+    minHeight: 64,
+    position: 'relative',
   },
   input: {
     flex: 1,
-    fontSize: 17,
-    color: '#222',
-    paddingVertical: 16,
+    fontSize: 18,
+    color: COLORS.textPrimary,
+    paddingVertical: 18,
     backgroundColor: 'transparent',
   },
   iconButton: {

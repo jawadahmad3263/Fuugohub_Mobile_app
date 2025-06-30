@@ -32,19 +32,18 @@ export const COLORS = {
   surface: '#ffffff',
   
   // Text Colors
-  textPrimary: '#333333',
-  textSecondary: '#666666',
+  textPrimary: '#1C252E',
+  textSecondary: '#637381',
   textLight: '#999999',
+  textOrange: '#E1735B',
   
   // Border Colors
-  border: '#dddddd',
+  border: '#919EAB33',
   borderLight: '#f0f0f0',
   
   // Shadow Colors
   shadow: '#000000',
-
-  // text
-  textPrimary: '#1C252E',
+ 
   
 };
 
