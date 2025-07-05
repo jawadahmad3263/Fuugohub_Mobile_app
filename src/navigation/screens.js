@@ -12,6 +12,8 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import HomeScreen from '../screens/main/HomeScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
+import AccountDetails from '../screens/auth/AccountDetails';
+import UserPreferences from '../screens/auth/UserPreferences';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -30,6 +32,16 @@ export const AUTH_SCREENS = {
     component: ForgotPasswordScreen,
     title: 'Forgot Password',
   },
+  ACCOUNT_DETAILS:{
+    name: 'AccountDetails',
+    component: AccountDetails,
+    title: 'Account Details',
+  },
+    USER_PREFERENCES:{
+    name: 'UserPreferences',
+    component: UserPreferences,
+    title: 'User Preferences',
+  }
 };
 
 // Main tab screen names and components

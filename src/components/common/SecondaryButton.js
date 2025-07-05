@@ -9,7 +9,7 @@ const SecondaryButton = ({
   loading = false,
   style,
   textStyle,
-  colors = ['#2196f3', '#64b5f6'],
+  colors = ['#fff', '#fff'],
   start = { x: 0, y: 0 },
   end = { x: 1, y: 0 },
 }) => {

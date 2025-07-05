@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TextInput as RNTextInput, StyleSheet, Animated, TouchableOpacity, Image, Platform } from 'react-native';
 import COLORS from '../../style/colors';
-
+import EyeIcon from  '../../assets/svg/ic-solar_eye-bold.svg'
 const CustomTextInput = ({
   label,
   value,
@@ -85,6 +85,7 @@ const CustomTextInput = ({
               style={styles.icon}
               resizeMode="contain"
             /> */}
+            {isFocused ? <EyeIcon/> : <EyeIcon/> }
           </TouchableOpacity>
         )}
         {icon && !isPassword && (

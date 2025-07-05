@@ -127,7 +127,19 @@ const Style = StyleSheet.create({
   textSecondary: {
     color: COLORS.textSecondary,
   },
-
+  border:{
+    borderColor:COLORS.border,
+    borderWidth:1
+  },
+  nextButton: {
+    marginTop: 0,
+    marginBottom: 10,
+    width: "100%",
+  },
+  nextButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 
 });
 

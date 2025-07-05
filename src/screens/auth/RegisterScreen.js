@@ -29,6 +29,7 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("demo@minimals.cc");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+ 
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -94,7 +95,7 @@ const RegisterScreen = ({ navigation }) => {
               <Spacing type="v" val={10} />
               <PrimaryButton
                 title="Start"
-                onPress={() => {}}
+                onPress={() => {navigation.navigate('AccountDetails')}}
                 style={styles.signInButton}
                 textStyle={styles.signInButtonText}
               />
