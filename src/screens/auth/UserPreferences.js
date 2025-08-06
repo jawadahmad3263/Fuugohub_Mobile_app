@@ -13,8 +13,9 @@ import COLORS from "../../style/colors";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import Style from "../../style/Style";
 import SecondaryButton from "../../components/common/SecondaryButton";
+import { AUTH_SCREENS } from "../../navigation/screens";
 
-const UserPreferences = ({ onPrevious, onNext }) => {
+const UserPreferences = ({navigation}) => {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
 
   const preferences = [
@@ -38,7 +39,7 @@ const UserPreferences = ({ onPrevious, onNext }) => {
   };
 
   const handleNext = () => {
-    onNext?.(selectedPreferences);
+  navigation.navigate(AUTH_SCREENS.IMAGE_UPLOAD.name)
   };
 
   return (

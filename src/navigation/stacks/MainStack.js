@@ -7,14 +7,19 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MAIN_TAB_SCREENS } from '../screens';
-
+import HomeIcon from '../../assets/svg/home-selected-icon.svg'
+import ProfileIcon from '../../assets/svg/profile-icon.svg'
+import ShopIcon from '../../assets/svg/shop-icon.svg'
+import InboxIcon from '../../assets/svg/inbox-icon.svg'
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const tabScreens = [
   MAIN_TAB_SCREENS.HOME,
+  MAIN_TAB_SCREENS.SHOP,
+  MAIN_TAB_SCREENS.INBOX,
   MAIN_TAB_SCREENS.PROFILE,
-  MAIN_TAB_SCREENS.SETTINGS,
+  
 ];
 
 // Bottom Tab Navigator

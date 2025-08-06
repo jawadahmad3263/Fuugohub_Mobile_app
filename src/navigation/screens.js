@@ -14,6 +14,10 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import AccountDetails from '../screens/auth/AccountDetails';
 import UserPreferences from '../screens/auth/UserPreferences';
+import ImageUploadScreen from '../screens/auth/ImageUploadScreen';
+import ShopScreen from '../screens/main/ShopScreen';
+import CameraRecordingScreen from '../screens/main/CameraRecordingScreen';
+import Inbox from '../screens/main/Inbox';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -41,7 +45,12 @@ export const AUTH_SCREENS = {
     name: 'UserPreferences',
     component: UserPreferences,
     title: 'User Preferences',
-  }
+  },
+  IMAGE_UPLOAD: {
+    name: 'ImageUploadScreen',
+    component: ImageUploadScreen,
+    title: 'Image Upload',
+  },
 };
 
 // Main tab screen names and components
@@ -54,6 +63,30 @@ export const MAIN_TAB_SCREENS = {
       // TODO: Add tab bar icons
     },
   },
+  SHOP: {
+    name: 'Shop',
+    component: ShopScreen,
+    options: {
+      tabBarLabel: 'Shop',
+      // TODO: Add tab bar icons
+    },
+  },
+  CAMERA_RECORDING: {
+    name: 'CameraRecording',
+    component: CameraRecordingScreen,
+    options: {
+     
+      // TODO: Add tab bar icons
+    },
+  },
+  INBOX: {
+    name: 'Inbox',
+    component: Inbox,
+    options: {
+      tabBarLabel: 'Inbox',
+      // TODO: Add tab bar icons
+    },
+  },
   PROFILE: {
     name: 'Profile',
     component: ProfileScreen,
@@ -62,12 +95,5 @@ export const MAIN_TAB_SCREENS = {
       // TODO: Add tab bar icons
     },
   },
-  SETTINGS: {
-    name: 'Settings',
-    component: SettingsScreen,
-    options: {
-      tabBarLabel: 'Settings',
-      // TODO: Add tab bar icons
-    },
-  },
+ 
 }; 
