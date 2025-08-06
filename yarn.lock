@@ -5452,6 +5452,7 @@ __metadata:
     react-native-svg: ^15.12.0
     react-native-svg-transformer: ^1.5.1
     react-native-toast-message: ^2.3.2
+    react-native-video: ^6.16.1
     react-redux: ^9.2.0
     react-test-renderer: 19.1.0
     typescript: 5.0.4
@@ -8406,6 +8407,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 82f1fec5d5af359d302e31dbee557aa555445dac75fe5d037265dea72fd95a3b3ec022dc47eed182f02c5f24d7443b34e7fc22656fa4ece2e33e9b04e4057f56
+  languageName: node
+  linkType: hard
+
+"react-native-video@npm:^6.16.1":
+  version: 6.16.1
+  resolution: "react-native-video@npm:6.16.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 40de297ed35527bf2cd77827c9842d51e84df78fbd0a7697235f8d0ca02de2b1a4562e9d3323391d514a9591a5078b10b26eac501ee7eb9a2a7c0c2ae45a90f5
   languageName: node
   linkType: hard
 
