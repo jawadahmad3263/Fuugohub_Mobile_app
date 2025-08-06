@@ -12,15 +12,60 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  StatusBar,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+
+import ProfileIcon from '../../assets/svg/profile-icon.svg';
+import AnalyticsIcon from '../../assets/svg/analytics.svg';
+import LogoutIcon from '../../assets/svg/logout.svg';
+import LiveStreamIcon from '../../assets/svg/live-strem-icon.svg';
+import EarningsIcon from '../../assets/svg/dollar.svg';
+import UserProfileAvatar from '../../assets/svg/user-profile-avatar.svg';
+import COLORS from '../../style/colors';
+import Spacing from '../../components/common/Spacing';
+import PrimaryButton from '../../components/common/PrimaryButton';
 
 const ProfileScreen = ({ navigation }) => {
   const [userProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 8900',
-    joinDate: 'January 2024',
+    name: 'John David',
+    description: 'Lorem ipsum dummy text..',
+    isOnline: true,
   });
+
+  const menuItems = [
+    {
+      id: 'profile',
+      title: 'Profile',
+      icon: ProfileIcon,
+      onPress: () => Alert.alert('Profile', 'Profile functionality to be implemented'),
+    },
+    {
+      id: 'liveStream',
+      title: 'Live Stream',
+      icon: LiveStreamIcon,
+      onPress: () => Alert.alert('Live Stream', 'Live stream functionality to be implemented'),
+    },
+    {
+      id: 'analytics',
+      title: 'Analytics',
+      icon: AnalyticsIcon,
+      onPress: () => Alert.alert('Analytics', 'Analytics functionality to be implemented'),
+    },
+    {
+      id: 'earnings',
+      title: 'Earnings',
+      icon: EarningsIcon,
+      onPress: () => Alert.alert('Earnings', 'Earnings functionality to be implemented'),
+    },
+    {
+      id: 'logout1',
+      title: 'Logout',
+      icon: LogoutIcon,
+      onPress: () => handleLogout(),
+    },
+  
+  ];
 
   const handleLogout = () => {
     Alert.alert(
@@ -35,7 +80,6 @@ const ProfileScreen = ({ navigation }) => {
           text: 'Logout',
           style: 'destructive',
           onPress: () => {
-            // TODO: Implement logout logic
             console.log('User logged out');
             Alert.alert('Success', 'Logout functionality to be implemented');
           },
@@ -44,194 +88,251 @@ const ProfileScreen = ({ navigation }) => {
     );
   };
 
-  const handleEditProfile = () => {
-    // TODO: Navigate to edit profile screen
-    Alert.alert('Edit Profile', 'Edit profile functionality to be implemented');
+  const handleBuyCoins = () => {
+    Alert.alert('Buy Coins', 'Buy coins functionality to be implemented');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      
+      {/* Header with Gradient */}
+      <LinearGradient
+        colors={['#f4511e', '#ff7043']}
+        style={styles.header}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.backIcon}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Profile</Text>
+          </View>
+
+          {/* User Profile Section */}
+          <View style={styles.userSection}>
+            <View style={styles.avatarContainer}>
+              <UserProfileAvatar width={60} height={60} />
+              {userProfile.isOnline && (
+                <View style={styles.onlineIndicator} />
+              )}
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.userName}>{userProfile.name}</Text>
+              <Text style={styles.userDescription}>{userProfile.description}</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+
+      {/* Scrollable Content */}
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Menu Items */}
+        <View style={styles.menuContainer}>
+          {menuItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.menuItem}
+              onPress={item.onPress}
+              activeOpacity={0.7}
+            >
+              <View style={styles.menuItemLeft}>
+                <item.icon width={24} height={24} />
+                <Text style={styles.menuItemText}>{item.title}</Text>
+              </View>
+              <Text style={styles.menuItemArrow}>→</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        
-        <View style={styles.content}>
-          {/* Profile Picture Section */}
-          <View style={styles.profileSection}>
-            <View style={styles.profilePicture}>
-              <Text style={styles.profileInitials}>
-                {userProfile.name.split(' ').map(n => n[0]).join('')}
-              </Text>
-            </View>
-            <Text style={styles.profileName}>{userProfile.name}</Text>
-            <Text style={styles.profileEmail}>{userProfile.email}</Text>
-          </View>
-          
-          {/* Profile Information */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Personal Information</Text>
-            
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Full Name</Text>
-              <Text style={styles.infoValue}>{userProfile.name}</Text>
-            </View>
-            
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Email</Text>
-              <Text style={styles.infoValue}>{userProfile.email}</Text>
-            </View>
-            
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Phone</Text>
-              <Text style={styles.infoValue}>{userProfile.phone}</Text>
-            </View>
-            
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Member Since</Text>
-              <Text style={styles.infoValue}>{userProfile.joinDate}</Text>
-            </View>
-          </View>
-          
-          {/* Action Buttons */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Actions</Text>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleEditProfile}>
-              <Text style={styles.actionButtonText}>Edit Profile</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionButtonText}>Change Password</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionButtonText}>Privacy Settings</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Logout Button */}
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
+
+        {/* Buy Coins Button */}
+        <PrimaryButton
+        title='Buy Coins'
+        textStyle={styles.buyCoinsText}
+        onPress={handleBuyCoins}
+        style={styles.buyCoinsButton}
+        />
+
+        {/* Footer Links */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerLink}>
+            <Text style={styles.footerLinkText}>Get Premium</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.footerLink}>
+            <Text style={styles.footerLinkText}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerLink}>
+            <Text style={styles.footerLinkText}>Terms & Services</Text>
+          </TouchableOpacity>
+          <Text style={styles.copyright}>@2025 Fuugohub</Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#f4511e',
-    padding: 20,
-    paddingTop: 40,
+    paddingTop: 0,
+    paddingBottom: 10,
+  },
+  safeArea: {
+    paddingTop: 10,
+  },
+  headerContent: {
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backIcon: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#fff',
+    marginLeft: 10,
   },
-  content: {
-    padding: 20,
-  },
-  profileSection: {
+  userSection: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 30,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
-  profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#f4511e',
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 20,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#4CAF50',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  userInfo: {
+    flex: 1,
     justifyContent: 'center',
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 6,
+  },
+  userDescription: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  menuContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+  },
+  menuItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    justifyContent: 'space-between',
+    backgroundColor: '#f8f9fa',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  profileInitials: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: 'white',
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
-  profileName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-  },
-  profileEmail: {
+  menuItemText: {
     fontSize: 16,
-    color: '#666',
+    fontWeight: '500',
+    color: '#333',
+    marginLeft: 16,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
+  menuItemArrow: {
+    fontSize: 18,
+    color: '#666',
+    fontWeight: 'bold',
+  },
+  buyCoinsButton: {
+     alignSelf:'center',
+    marginTop: 24,
+    borderRadius: 12,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    width:'90%'
   },
-  cardTitle: {
+  buyCoinsGradient: {
+    paddingVertical: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buyCoinsText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
+    color: '#fff',
   },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 32,
+    paddingBottom: 20,
   },
-  infoLabel: {
-    fontSize: 16,
+  footerLink: {
+    marginBottom: 8,
+  },
+  footerLinkText: {
+    fontSize: 14,
     color: '#666',
-    fontWeight: '500',
   },
-  infoValue: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  actionButton: {
-    backgroundColor: '#f4511e',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  actionButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  logoutButton: {
-    backgroundColor: '#ff4444',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+  copyright: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 12,
   },
 });
 
