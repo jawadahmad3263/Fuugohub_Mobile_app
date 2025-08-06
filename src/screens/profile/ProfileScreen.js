@@ -25,6 +25,7 @@ import UserProfileAvatar from '../../assets/svg/user-profile-avatar.svg';
 import COLORS from '../../style/colors';
 import Spacing from '../../components/common/Spacing';
 import PrimaryButton from '../../components/common/PrimaryButton';
+import { APP_SCREENS } from '../../navigation/screens';
 
 const ProfileScreen = ({ navigation }) => {
   const [userProfile] = useState({
@@ -38,7 +39,7 @@ const ProfileScreen = ({ navigation }) => {
       id: 'profile',
       title: 'Profile',
       icon: ProfileIcon,
-      onPress: () => Alert.alert('Profile', 'Profile functionality to be implemented'),
+      onPress: () => {navigation.navigate(APP_SCREENS.PERSONAL_PROFILE.name)}
     },
     {
       id: 'liveStream',

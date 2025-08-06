@@ -7,7 +7,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import { MAIN_TAB_SCREENS } from '../screens';
+import { APP_SCREENS, MAIN_TAB_SCREENS } from '../screens';
 import HomeSelectedIcon from '../../assets/svg/home-selected-icon.svg';
 import HomeUnselectedIcon from '../../assets/svg/home-unselected-icon.svg';
 import ProfileIcon from '../../assets/svg/profile-icon.svg';
@@ -60,7 +60,13 @@ const tabScreens = [
     unselectedIcon: ProfileIcon,
   },
 ];
-
+const appScreens = [
+  {
+    name: 'PersonalProfile',
+    component: APP_SCREENS.PERSONAL_PROFILE.component,
+    
+  },
+];
 // Custom Tab Bar Component
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   return (
@@ -154,6 +160,7 @@ const MainStack = () => {
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen name="PersonalProfile" component={APP_SCREENS.PERSONAL_PROFILE.component} />
       {/* Add other main screens here */}
     </Stack.Navigator>
   );

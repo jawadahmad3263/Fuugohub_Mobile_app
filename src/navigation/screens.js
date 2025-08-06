@@ -18,6 +18,7 @@ import ImageUploadScreen from '../screens/auth/ImageUploadScreen';
 import ShopScreen from '../screens/main/ShopScreen';
 import CameraRecordingScreen from '../screens/main/CameraRecordingScreen';
 import Inbox from '../screens/main/Inbox';
+import PersonalProfile from '../screens/profile/PersonalProfile';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -97,3 +98,14 @@ export const MAIN_TAB_SCREENS = {
   },
  
 }; 
+
+export const APP_SCREENS = {
+  PERSONAL_PROFILE: {
+    name: 'PersonalProfile',
+    component: PersonalProfile,
+    title: 'Personal Profile',
+    options: {
+      headerShown: false,
+    },
+  },
+};

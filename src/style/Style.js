@@ -3,6 +3,11 @@ import COLORS from './colors';
 
 const Style = StyleSheet.create({
   // Flex directions
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+    paddingTop: 36
+  },
   row: {
     flexDirection: 'row',
   },
@@ -140,7 +145,9 @@ const Style = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-
+hpadding:{
+  paddingHorizontal: 16,
+}
 });
 
 export default Style;
