@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Video from 'react-native-video';
+import { useIsFocused } from '@react-navigation/native';
 import HeartIcon from '../../assets/svg/fav.svg';
 import CommentIcon from '../../assets/svg/comments-icons.svg';
 import SaveIcon from '../../assets/svg/save-icon.svg';
@@ -81,6 +82,7 @@ const sampleVideos = [
 ];
 
 const HomeScreen = ({ navigation }) => {
+  const isFocused = useIsFocused();
   const [activeTab, setActiveTab] = useState('Your Vibe');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [videoLoading, setVideoLoading] = useState({});
@@ -98,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
           style={styles.video}
           resizeMode="cover"
           repeat
-          paused={!isActive}
+          paused={!isActive || !isFocused}
           muted={false}
           playInBackground={false}
           playWhenInactive={false}

@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native'
 import React, { useState } from 'react'
-import EmailIcon from '../../assets/svg/mail-icon.svg'
-import LocationIcon from '../../assets/svg/location-black.svg'
-import BagIcon from '../../assets/svg/bag-icon.svg'
 import UserProfileAvatar from '../../assets/svg/user-profile-avatar.svg'
 import Style from '../../style/Style'
 import Header from '../../components/common/Header'
-import PrimaryButton from '../../components/common/PrimaryButton'
 import Spacing from '../../components/common/Spacing'
+import MyDropsTab from './components/MyDropsTab'
+import FollowersTab from './components/FollowersTab'
+import FollowingsTab from './components/FollowingsTab'
+import LikedTab from './components/LikedTab'
 
 const PersonalProfile = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('My Drops')
@@ -16,11 +16,6 @@ const PersonalProfile = ({ navigation }) => {
 
   const handleTabPress = (tab) => {
     setActiveTab(tab)
-  }
-
-  const handleSetupBusiness = () => {
-    // Handle setup business page
-    console.log('Setup business page')
   }
 
   return (
@@ -66,68 +61,11 @@ const PersonalProfile = ({ navigation }) => {
           ))}
         </View>
 
-        {/* Follower/Following Counts */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>86.6k</Text>
-            <Text style={styles.statLabel}>Follower</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>90.5k</Text>
-            <Text style={styles.statLabel}>Following</Text>
-          </View>
-        </View>
-
-        {/* About Section */}
-        <View style={styles.aboutContainer}>
-          <Text style={styles.aboutTitle}>About</Text>
-          <Text style={styles.aboutText}>
-            Tart I love sugar plum I love oat cake. Sweet roll caramels I love jujubes. Topping cake wafer.
-          </Text>
-          
-          <View style={styles.contactInfo}>
-            <View style={styles.contactItem}>
-              <LocationIcon width={16} height={16} />
-              <Text style={styles.contactText}>USA</Text>
-            </View>
-            
-            <View style={styles.contactItem}>
-              <EmailIcon width={16} height={16} />
-              <Text style={styles.contactText}>brown.dejah@parisian.com</Text>
-            </View>
-            
-            <View style={styles.contactItem}>
-              <BagIcon width={16} height={16} />
-              <Text style={styles.contactText}>UX Designer at google</Text>
-            </View>
-            
-            <View style={styles.contactItem}>
-              <BagIcon width={16} height={16} />
-              <Text style={styles.contactText}>Studied at College of new Jersey</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Setup Business Button */}
-        <PrimaryButton
-          title="Setup a Business Page"
-          onPress={handleSetupBusiness}
-          style={styles.setupBusinessButton}
-          textStyle={styles.setupBusinessButtonText}
-        />
-
-        {/* Image Grid */}
-        <View style={styles.imageGrid}>
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <View key={item} style={styles.imageContainer}>
-              <View style={styles.placeholderImage}>
-                <Text style={styles.placeholderText}>Product {item}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-        <Spacing val={50}/>
+        {/* Tab Content */}
+        {activeTab === 'My Drops' && <MyDropsTab />}
+        {activeTab === 'Followers' && <FollowersTab />}
+        {activeTab === 'Followings' && <FollowingsTab />}
+        {activeTab === 'Liked' && <LikedTab />}
       </ScrollView>
     </View>
   )

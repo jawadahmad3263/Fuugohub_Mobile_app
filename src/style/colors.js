@@ -21,6 +21,7 @@ export const COLORS = {
   lightGray: '#f5f5f5',
   darkGray: '#333333',
   
+  
   // Status Colors
   success: '#4caf50',
   warning: '#ff9800',
@@ -43,6 +44,25 @@ export const COLORS = {
   
   // Shadow Colors
   shadow: '#000000',
+
+  // Button Colors
+  buttonPrimary: '#00A76F',
+  buttonSecondary: '#2196f3',
+  buttonSuccess: '#4caf50',
+  buttonWarning: '#ff9800',
+  buttonError: '#f44336',
+  buttonInfo: '#2196f3',
+
+  // status
+  statusSuccess: '#22C55E29',
+  statusWarning: '#FF9800',
+  statusError: '#F44336',
+  statusInfo: '#2196f3',
+  darkLightGreen: '#118D57',
+
+  // status background
+  statusSuccessBackground: '#00A76F1A',
+  statusWarningBackground: '#FF98001A',
  
   
 };

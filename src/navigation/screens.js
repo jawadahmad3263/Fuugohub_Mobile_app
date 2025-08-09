@@ -15,10 +15,10 @@ import SettingsScreen from '../screens/main/SettingsScreen';
 import AccountDetails from '../screens/auth/AccountDetails';
 import UserPreferences from '../screens/auth/UserPreferences';
 import ImageUploadScreen from '../screens/auth/ImageUploadScreen';
-import ShopScreen from '../screens/main/ShopScreen';
 import CameraRecordingScreen from '../screens/main/CameraRecordingScreen';
 import Inbox from '../screens/main/Inbox';
 import PersonalProfile from '../screens/profile/PersonalProfile';
+import ShopScreen from '../screens/shop/components/ShopScreen';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
