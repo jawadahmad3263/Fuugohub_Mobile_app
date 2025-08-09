@@ -16,7 +16,7 @@ import AccountDetails from '../screens/auth/AccountDetails';
 import UserPreferences from '../screens/auth/UserPreferences';
 import ImageUploadScreen from '../screens/auth/ImageUploadScreen';
 import CameraRecordingScreen from '../screens/main/CameraRecordingScreen';
-import Inbox from '../screens/main/Inbox';
+import Inbox from '../screens/inbox/Inbox';
 import PersonalProfile from '../screens/profile/PersonalProfile';
 import ShopScreen from '../screens/shop/components/ShopScreen';
 
