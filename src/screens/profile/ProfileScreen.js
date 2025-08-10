@@ -51,7 +51,7 @@ const ProfileScreen = ({ navigation }) => {
       id: 'analytics',
       title: 'Analytics',
       icon: AnalyticsIcon,
-      onPress: () => Alert.alert('Analytics', 'Analytics functionality to be implemented'),
+      onPress: () => {navigation.navigate(APP_SCREENS.ANALYTICS.name)}
     },
     {
       id: 'earnings',

@@ -4,6 +4,7 @@ import NotificationIcon from '../../assets/svg/notification-icon.svg'
 import SettingsIcon from '../../assets/svg/setting-icon.svg'
 import HeaderAvatar from '../../assets/svg/header-profile-avatar.svg'
 import BackIcon from '../../assets/svg/back-arrow-white.svg'
+import { useNavigation } from '@react-navigation/native'
 
 const Header = ({ 
   title, 
@@ -15,6 +16,10 @@ const Header = ({
   showRightIcons = true,
   notificationCount = 0
 }) => {
+  const navigation = useNavigation()
+  const handleBackPress = () => {
+   onBackPress ? onBackPress() : navigation.goBack()
+  }
   return (
     <View style={styles.container}>
       <View style={styles.headerContent}>
@@ -23,7 +28,7 @@ const Header = ({
           {showBackButton && (
             <TouchableOpacity 
               style={styles.backButton}
-              onPress={onBackPress}
+              onPress={handleBackPress}
             >
               <Text style={{ fontSize: 24, color: '#000' }}>←</Text>
             </TouchableOpacity>
