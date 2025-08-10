@@ -42,6 +42,7 @@ const Style = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
+
   // Gaps (use with row/column)
   gap4: {
     gap: 4,
@@ -103,15 +104,27 @@ const Style = StyleSheet.create({
   // Font weights
   bold: {
     fontWeight: 'bold',
+ 
   },
   semibold: {
     fontWeight: '600',
+ 
   },
   medium: {
     fontWeight: '500',
+  
   },
   regular: {
     fontWeight: '400',
+   
+  },
+  light: {
+    fontWeight: '300',
+    fontFamily: 'PublicSans-Light',
+  },
+  thin: {
+    fontWeight: '100',
+    fontFamily: 'PublicSans-Thin',
   },
 
   // Text align

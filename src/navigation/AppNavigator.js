@@ -20,7 +20,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
+        {!isAuthenticated ? (
           // Auth Stack
           <Stack.Screen name="Auth" component={AuthStack} />
         ) : (
