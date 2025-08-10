@@ -57,7 +57,7 @@ const ProfileScreen = ({ navigation }) => {
       id: 'earnings',
       title: 'Earnings',
       icon: EarningsIcon,
-      onPress: () => Alert.alert('Earnings', 'Earnings functionality to be implemented'),
+      onPress: () => {navigation.navigate(APP_SCREENS.EARNINGS.name)}
     },
     {
       id: 'logout1',

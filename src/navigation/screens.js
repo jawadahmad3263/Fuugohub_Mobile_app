@@ -19,6 +19,8 @@ import CameraRecordingScreen from '../screens/main/CameraRecordingScreen';
 import Inbox from '../screens/inbox/Inbox';
 import PersonalProfile from '../screens/profile/PersonalProfile';
 import ShopScreen from '../screens/shop/components/ShopScreen';
+import EarningsScreen from '../screens/earnings/EarningsScreen';
+import AnalyticsScreen from '../screens/analytics/AnalyticsScreen';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -107,5 +109,15 @@ export const APP_SCREENS = {
     options: {
       headerShown: false,
     },
+  },
+  EARNINGS: {
+    name: 'EarningsScreen',
+    component: EarningsScreen,
+    title: 'Earnings',
+  },
+  ANALYTICS: {
+    name: 'Analytics',
+    component: AnalyticsScreen,
+    title: 'Analytics',
   },
 };

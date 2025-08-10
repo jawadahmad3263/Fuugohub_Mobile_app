@@ -120,11 +120,11 @@ const Style = StyleSheet.create({
   },
   light: {
     fontWeight: '300',
-    fontFamily: 'PublicSans-Light',
+   
   },
   thin: {
     fontWeight: '100',
-    fontFamily: 'PublicSans-Thin',
+    
   },
 
   // Text align
@@ -158,9 +158,39 @@ const Style = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-hpadding:{
-  paddingHorizontal: 16,
-}
+  hpadding:{
+    paddingHorizontal: 16,
+  },
+  // Additional common styles
+  cardShadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  rounded12: {
+    borderRadius: 12,
+  },
+  rounded8: {
+    borderRadius: 8,
+  },
+  // Margin utilities
+  marginTop16: {
+    marginTop: 16,
+  },
+  marginTop24: {
+    marginTop: 24,
+  },
+  marginBottom16: {
+    marginBottom: 16,
+  },
+  marginBottom24: {
+    marginBottom: 24,
+  },
 });
 
 export default Style;

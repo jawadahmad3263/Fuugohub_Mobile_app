@@ -25,6 +25,7 @@ export const COLORS = {
   // Status Colors
   success: '#4caf50',
   warning: '#ff9800',
+  darkLightWarning:"#B76E00",
   error: '#f44336',
   info: '#2196f3',
   
@@ -59,7 +60,7 @@ export const COLORS = {
   statusError: '#F44336',
   statusInfo: '#2196f3',
   darkLightGreen: '#118D57',
-
+  pendingStatusBg:"#FFAB0029",
   // status background
   statusSuccessBackground: '#00A76F1A',
   statusWarningBackground: '#FF98001A',
