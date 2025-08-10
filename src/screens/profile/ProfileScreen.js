@@ -95,9 +95,8 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      
-      {/* Header with Gradient */}
+       
+
       <LinearGradient
         colors={['#f4511e', '#ff7043']}
         style={styles.header}

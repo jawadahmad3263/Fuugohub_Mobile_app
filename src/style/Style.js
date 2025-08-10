@@ -35,6 +35,9 @@ const Style = StyleSheet.create({
   justifyEvenly: {
     justifyContent: 'space-evenly',
   },
+  justifyEnd: {
+    justifyContent: 'flex-end',
+  },
   alignStart: {
     alignItems: 'flex-start',
   },

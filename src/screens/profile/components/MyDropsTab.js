@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import EmailIcon from '../../../assets/svg/mail-icon.svg';
 import LocationIcon from '../../../assets/svg/location-black.svg';
@@ -7,10 +7,19 @@ import PrimaryButton from '../../../components/common/PrimaryButton';
 import Spacing from '../../../components/common/Spacing';
 import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
 import COLORS from '../../../style/colors';
-
+import CreateNewBusinessModal from '../../businessPage/components/CreateNewBusinessModal';
+import { APP_SCREENS } from '../../../navigation/screens';
+import { useNavigation } from '@react-navigation/native';
 const MyDropsTab = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigation = useNavigation();
+  const handleCreateBusiness = () => {
+    navigation.navigate(APP_SCREENS.BUSINESS_PAGE.name);
+    setIsModalVisible(false);
+  };
   const handleSetupBusiness = () => {
     // Handle setup business page
+    setIsModalVisible(true);
     console.log('Setup business page');
   };
 
@@ -77,6 +86,11 @@ const MyDropsTab = () => {
           </View>
         ))}
       </View>
+      <CreateNewBusinessModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onCreate={handleCreateBusiness}
+      />
       <Spacing val={50} />
     </View>
   );
