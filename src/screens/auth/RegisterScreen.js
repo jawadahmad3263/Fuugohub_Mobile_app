@@ -25,12 +25,35 @@ import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedE
 import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
+import { Post } from "../../services/api";
+import { validateEmail } from "../../utils/common";
 const RegisterScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("demo@minimals.cc");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
- 
-
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+const handleStart = () => {
+  navigation.navigate('AccountDetails')
+  ret
+  
+if(!validateEmail(email)){
+  setError('Please enter a valid email')
+  return
+}
+  const data = {
+    email: email,
+  }
+  setLoading(true)
+  Post({endpoint: '/auth/register', data: data}).then((res) => {
+    console.log(res)
+    setLoading(false)
+    navigation.navigate('AccountDetails')
+  }).catch((err) => {
+    console.log(err)
+    setLoading(false)
+  })  
+}
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -77,8 +100,9 @@ const RegisterScreen = ({ navigation }) => {
                 placeholder="Email address"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                error={error}
               />
-              <CustomTextInput
+              {/* <CustomTextInput
                 label="Password"
                 value={password}
                 onChangeText={setPassword}
@@ -91,13 +115,14 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={setConfirmPassword}
                 placeholder="Confirm Password"
                 secureTextEntry
-              />
+              /> */}
               <Spacing type="v" val={10} />
               <PrimaryButton
                 title="Start"
-                onPress={() => {navigation.navigate('AccountDetails')}}
+                onPress={handleStart}
                 style={styles.signInButton}
                 textStyle={styles.signInButtonText}
+                loading={loading}
               />
             </View>
 

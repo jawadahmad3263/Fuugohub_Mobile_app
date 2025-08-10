@@ -18,6 +18,7 @@ import SecondaryButton from '../../components/common/SecondaryButton';
 import Spacing from '../../components/common/Spacing';
 import COLORS from '../../style/colors';
 import Style from '../../style/Style';
+import { APP_SCREENS, MAIN_TAB_SCREENS } from '../../navigation/screens';
 
 const ImageUploadScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -84,6 +85,7 @@ const ImageUploadScreen = ({ navigation }) => {
   const handleComplete = () => {
     // TODO: Complete profile setup
     console.log('Complete pressed');
+    navigation.navigate('Main');
   };
 
   return (

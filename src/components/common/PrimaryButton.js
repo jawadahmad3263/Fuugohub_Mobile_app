@@ -12,6 +12,7 @@ const PrimaryButton = ({
   colors = ['#de993b', '#f25b7c'], // orange to pink
   start = { x: 0, y: 0 },
   end = { x: 0, y: 1 }, // vertical gradient
+ 
 }) => {
   return (
     <TouchableOpacity

@@ -13,6 +13,7 @@ const CustomTextInput = ({
   icon,
   style,
   inputStyle,
+  error,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -92,6 +93,7 @@ const CustomTextInput = ({
           <Image source={icon} style={styles.icon} resizeMode="contain" />
         )}
       </View>
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };
@@ -127,6 +129,11 @@ const styles = StyleSheet.create({
     height: 22,
     tintColor: '#b0b7c3',
   },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
+  },
 });
 
-export default CustomTextInput; 
+export default CustomTextInput;     

@@ -24,7 +24,8 @@ const AccountDetails = () => {
     firstName: 'John',
     lastName: 'David',
     phoneNumber: '212 456 7890',
-  
+    password: '',
+    confirmPassword: '',
     gender: 'male',
     age: 'under13',
   });
@@ -113,7 +114,7 @@ const AccountDetails = () => {
           </View>
 
           {/* Password */}
-          {/* <View style={styles.inputGroup}>
+          <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.passwordContainer}>
               <TextInput
@@ -131,10 +132,10 @@ const AccountDetails = () => {
                 <Text style={styles.eyeIcon}>👁️</Text>
               </TouchableOpacity>
             </View>
-          </View> */}
+          </View>
 
           {/* Confirm Password */}
-          {/* <View style={styles.inputGroup}>
+          <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password</Text>
             <View style={styles.passwordContainer}>
               <TextInput
@@ -152,7 +153,7 @@ const AccountDetails = () => {
                 <Text style={styles.eyeIcon}>👁️</Text>
               </TouchableOpacity>
             </View>
-          </View> */}
+          </View>
 
           {/* Gender */}
           <View style={styles.inputGroup}>

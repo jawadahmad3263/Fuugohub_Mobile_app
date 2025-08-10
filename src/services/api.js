@@ -1,146 +1,380 @@
-/**
- * API Service
- * Centralized API handling for the app using Axios
- */
+import axios from 'axios'
+import { getUserToken } from '../utils/common'
 
-import axios from 'axios';
+ 
+// import { BASE_URL } from '../utils/constant'
+const BASE_URL = 'https://fuugohug-production.up.railway.app'
+// 'localhost/api/v1'
+axios.defaults.baseURL = BASE_URL
+ 
 
-const BASE_URL = 'https://api.fuugohub.com'; // TODO: Update with your actual API URL
+export const Post = async ({ endpoint, data }) => {
+    const token = await getUserToken()
 
-// Create axios instance
-const apiClient = axios.create({
-  baseURL: BASE_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+    return new Promise((resolve, reject) => {
+        axios
+            .post(endpoint, data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
+export const Patch = async ({ endpoint, data }) => {
+    const token = await getUserToken()
 
-// Request interceptor
-apiClient.interceptors.request.use(
-  (config) => {
-    // TODO: Add authentication token
-    // const token = getToken();
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+    return new Promise((resolve, reject) => {
+        axios
+            .patch(endpoint, data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
+export const Put = async ({ endpoint, data }) => {
+    const token = await getUserToken()
 
-// Response interceptor
-apiClient.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
-  (error) => {
-    console.error('API request failed:', error);
-    
-    // Handle different error types
-    if (error.response) {
-      // Server responded with error status
-      const { status, data } = error.response;
-      
-      switch (status) {
-        case 401:
-          // Unauthorized - handle logout
-          // TODO: Dispatch logout action
-          break;
-        case 403:
-          // Forbidden
-          break;
-        case 404:
-          // Not found
-          break;
-        case 500:
-          // Server error
-          break;
-        default:
-          break;
-      }
-      
-      return Promise.reject(new Error(data?.message || `HTTP ${status} error`));
-    } else if (error.request) {
-      // Network error
-      return Promise.reject(new Error('Network error. Please check your connection.'));
-    } else {
-      // Other error
-      return Promise.reject(new Error('An unexpected error occurred.'));
+    return new Promise((resolve, reject) => {
+        axios
+            .put(endpoint, data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(endpoint, error.response.data)
+                    console.log(endpoint, error.response.status)
+                    console.log(endpoint, error.response.headers)
+                }
+                reject(error)
+            })
+    })
+}
+
+export const PutQuery = async ({
+    endpoint,
+    data,
+    queryString = '',
+    language = 'en',
+}) => {
+    const token = await getUserToken()
+
+    console.log('language====>', language)
+    // Append the query string to the endpoint
+    const url = queryString ? `${endpoint}?${queryString}` : endpoint
+
+    return new Promise((resolve, reject) => {
+        axios
+            .put(url, data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': language,
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(endpoint, error.response.data)
+                    console.log(endpoint, error.response.status)
+                    console.log(endpoint, error.response.headers)
+                }
+                reject(error)
+            })
+    })
+}
+//put form data
+export const PutFormData = async ({ endpoint, data }) => {
+    const token = await getUserToken()
+
+    return new Promise((resolve, reject) => {
+        axios
+            .put(endpoint, data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': lang,
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'PUT',
+                    'Access-Control-Allow-Headers':
+                        'Content-Type, Authorization',
+                    'Access-Control-Allow-Credentials': 'true',
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(endpoint, error.response.data)
+                    console.log(endpoint, error.response.status)
+                    console.log(endpoint, error.response.headers)
+                }
+                reject(error)
+            })
+    })
+}
+
+export const Delete = async ({ endpoint, data }) => {
+    const token = await getUserToken()
+
+    return new Promise((resolve, reject) => {
+        axios
+            .delete(endpoint, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+                data: data,
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(endpoint, error.response.data)
+                    console.log(endpoint, error.response.status)
+                    console.log(endpoint, error.response.headers)
+                }
+                reject(error)
+            })
+    })
+}
+
+export const PostFormData = async ({ endpoint, data }) => {
+    const token = await getUserToken()
+    console.log('token', token)
+    return new Promise((resolve, reject) => {
+        axios
+            .post(endpoint, data, {
+                headers: {
+                    Authorization: `bearer ${token}` || '',
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers':
+                        'Content-Type, Authorization',
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Accept-Language': 'en',
+                },
+                transformRequest: (data_, headers) => {
+                    console.log(endpoint, data)
+                    return data
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log(endpoint, error)
+                reject(error)
+            })
+    })
+}
+//patch formdata
+export const PatchFormData = async ({ endpoint, data }) => {
+    const token = await getUserToken()
+
+    return new Promise((resolve, reject) => {
+        axios
+            .patch(endpoint, data, {
+                headers: {
+                    Authorization: `bearer ${token}` || '',
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'PATCH',
+                    'Access-Control-Allow-Headers':
+                        'Content-Type, Authorization',
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Accept-Language': 'en',
+                },
+                transformRequest: (data_, headers) => {
+                    console.log(endpoint, data)
+                    return data
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log(endpoint, error)
+                reject(error)
+            })
+    })
+}
+
+export const PostFormDataFetch = async ({ endpoint, data }) => {
+    const token = await getUserToken()
+    const newEnd = BASE_URL + endpoint
+    console.log(newEnd)
+    try {
+        const response = await fetch(newEnd, {
+            method: 'POST',
+            headers: {
+                Authorization: `bearer ${token}` || '',
+                'Content-Type': 'multipart/form-data',
+                'Accept-Language': 'en',
+            },
+            body: data,
+        })
+        console.log(response, 'Response')
+    } catch (err) {
+        console.log('err', err)
     }
-  }
-);
+}
+export const Get = async ({ endpoint, params }) => {
+    const token = await getUserToken()
+    console.log('token', token)
+    return new Promise((resolve, reject) => {
+        axios
+            .get(endpoint, {
+                params: params,
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, params)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
+export const DeleteWithParams = async ({ endpoint, params }) => {
+    const token = await getUserToken()
 
-/**
- * GET request
- * @param {string} endpoint - API endpoint
- * @param {object} params - Query parameters
- * @returns {Promise} - API response
- */
-export const apiGet = async (endpoint, params = {}) => {
-  return apiClient.get(endpoint, { params });
-};
+    return new Promise((resolve, reject) => {
+        axios
+            .delete(endpoint, {
+                params: params,
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
 
-/**
- * POST request
- * @param {string} endpoint - API endpoint
- * @param {object} data - Request body data
- * @returns {Promise} - API response
- */
-export const apiPost = async (endpoint, data = {}) => {
-  return apiClient.post(endpoint, data);
-};
+export const PutWithParams = async ({ endpoint, params }) => {
+    const token = await getUserToken()
 
-/**
- * PUT request
- * @param {string} endpoint - API endpoint
- * @param {object} data - Request body data
- * @returns {Promise} - API response
- */
-export const apiPut = async (endpoint, data = {}) => {
-  return apiClient.put(endpoint, data);
-};
+    return new Promise((resolve, reject) => {
+        axios
+            .put(endpoint, {
+                params: params,
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, response.data)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
+export const GetWithoutToken = async ({ endpoint, params }) => {
+    const token = await getUserToken()
+    return new Promise((resolve, reject) => {
+        axios
+            .get(endpoint, {
+                params: params,
+                headers: {
+                    'content-type': 'application/json',
+                    'Accept-Language': 'en',
+                    // Authorization: `bearer ${token}`,
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, params)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
 
-/**
- * DELETE request
- * @param {string} endpoint - API endpoint
- * @returns {Promise} - API response
- */
-export const apiDelete = async (endpoint) => {
-  return apiClient.delete(endpoint);
-};
+export const GetWithUserDate = async ({ endpoint, params }) => {
+    const token = await getUserToken()
 
-// Auth API endpoints
-export const authAPI = {
-  login: (credentials) => apiPost('/auth/login', credentials),
-  register: (userData) => apiPost('/auth/register', userData),
-  forgotPassword: (email) => apiPost('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => apiPost('/auth/reset-password', { token, password }),
-  logout: () => apiPost('/auth/logout'),
-};
-
-// User API endpoints
-export const userAPI = {
-  getProfile: () => apiGet('/user/profile'),
-  updateProfile: (data) => apiPut('/user/profile', data),
-  changePassword: (data) => apiPut('/user/change-password', data),
-};
-
-// App specific API endpoints
-export const appAPI = {
-  getDashboard: () => apiGet('/dashboard'),
-  getSettings: () => apiGet('/settings'),
-  updateSettings: (data) => apiPut('/settings', data),
-};
-
-export default {
-  apiGet,
-  apiPost,
-  apiPut,
-  apiDelete,
-  authAPI,
-  userAPI,
-  appAPI,
-}; 
+    console.log('token', token)
+    return new Promise((resolve, reject) => {
+        axios
+            .get(endpoint, {
+                params: params,
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `bearer ${token}`,
+                    'Accept-Language': 'en',
+                    'user-date': new Date().toISOString(),
+                },
+            })
+            .then((response) => {
+                console.log(endpoint, params)
+                resolve(response.data)
+            })
+            .catch((error) => {
+                console.log('Error', endpoint, error)
+                reject(error)
+            })
+    })
+}
