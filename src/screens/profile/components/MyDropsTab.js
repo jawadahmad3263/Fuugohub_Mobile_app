@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import EmailIcon from '../../../assets/svg/mail-icon.svg';
 import LocationIcon from '../../../assets/svg/location-black.svg';
 import BagIcon from '../../../assets/svg/bag-icon.svg';
@@ -13,6 +13,33 @@ import { useNavigation } from '@react-navigation/native';
 const MyDropsTab = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useNavigation();
+  
+  const productImages = [
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop',
+      name: 'Sneakers'
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop',
+      name: 'Lipstick'
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop',
+      name: 'Watch'
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop',
+      name: 'Headphones'
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop',
+      name: 'Camera'
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=300&fit=crop',
+      name: 'Sunglasses'
+    }
+  ];
   const handleCreateBusiness = () => {
     navigation.navigate(APP_SCREENS.BUSINESS_PAGE.name);
     setIsModalVisible(false);
@@ -78,11 +105,14 @@ const MyDropsTab = () => {
 
       {/* Image Grid */}
       <View style={styles.imageGrid}>
-        {[1, 2, 3, 4, 5, 6].map((item) => (
-          <View key={item} style={styles.imageContainer}>
-            <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>Product {item}</Text>
-            </View>
+        {productImages.map((product, index) => (
+          <View key={index} style={styles.imageContainer}>
+            <Image 
+              source={{ uri: product.imageUrl }}
+              style={styles.productImage}
+              resizeMode="cover"
+            
+            />
           </View>
         ))}
       </View>
@@ -105,6 +135,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     marginBottom: 1,
+    flex:1
   },
   statItem: {
     flex: 1,
@@ -176,6 +207,7 @@ const styles = StyleSheet.create({
     width: '48%',
     aspectRatio: 1,
     marginBottom: 8,
+    
   },
   placeholderImage: {
     flex: 1,
@@ -187,6 +219,14 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: 12,
     color: '#666',
+  },
+  productImage: {
+    height: 285,
+ 
+    objectFit:'cover',
+    overflow:'hidden',
+    backgroundColor:COLORS.lightGray
+
   },
   setupBusinessButton: {
     marginTop: 20,

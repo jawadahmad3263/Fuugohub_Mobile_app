@@ -66,6 +66,7 @@ const PersonalProfile = ({ navigation }) => {
         {activeTab === 'Followers' && <FollowersTab />}
         {activeTab === 'Followings' && <FollowingsTab />}
         {activeTab === 'Liked' && <LikedTab />}
+        <Spacing val={350}/>
       </ScrollView>
     </View>
   )
