@@ -1,167 +1,203 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
+import Spacing from '../../../components/common/Spacing';
+import FollowingsTab from '../../profile/components/FollowingsTab';
 
 const FollowersTab = () => {
-  const followers = [
+  const SAMPLE_FOLLOWERS = [
     {
-      id: 1,
-      name: 'Sarah Johnson',
-      username: '@sarahj',
-      avatar: '👤',
-      isFollowing: true,
-      mutualConnections: 12
+      id: '1',
+      name: 'Selina Boyer',
+      role: 'Project Coordinator',
+      avatar: 'https://i.pravatar.cc/100?img=5',
     },
     {
-      id: 2,
-      name: 'Mike Chen',
-      username: '@mikechen',
-      avatar: '👤',
-      isFollowing: false,
-      mutualConnections: 8
+      id: '2',
+      name: 'Aspen Schmitt',
+      role: 'Legal Counsel',
+      avatar: 'https://i.pravatar.cc/100?img=52',
     },
     {
-      id: 3,
-      name: 'Emma Davis',
-      username: '@emmadavis',
-      avatar: '👤',
-      isFollowing: true,
-      mutualConnections: 15
+      id: '3',
+      name: 'Kendrick Mays',
+      role: 'Product Designer',
+      avatar: 'https://i.pravatar.cc/100?img=15',
     },
     {
-      id: 4,
-      name: 'Alex Rodriguez',
-      username: '@alexrod',
-      avatar: '👤',
-      isFollowing: false,
-      mutualConnections: 3
-    }
+      id: '4',
+      name: 'Aya Patel',
+      role: 'Data Analyst',
+      avatar: 'https://i.pravatar.cc/100?img=32',
+    },
+    {
+      id: '5',
+      name: 'Jonah Klein',
+      role: 'iOS Engineer',
+      avatar: 'https://i.pravatar.cc/100?img=41',
+    },
+    {
+      id: '6',
+      name: 'Mina Park',
+      role: 'Marketing Lead',
+      avatar: 'https://i.pravatar.cc/100?img=21',
+    },
   ];
 
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Followers</Text>
-        <Text style={styles.headerSubtitle}>People following your business</Text>
-      </View>
-      
-      {followers.map((follower) => (
-        <View key={follower.id} style={styles.followerCard}>
-          <View style={styles.followerInfo}>
-            <View style={styles.avatarContainer}>
-              <Text style={styles.avatarText}>{follower.avatar}</Text>
-            </View>
-            <View style={styles.followerDetails}>
-              <Text style={styles.followerName}>{follower.name}</Text>
-              <Text style={styles.followerUsername}>{follower.username}</Text>
-              <Text style={styles.mutualText}>{follower.mutualConnections} mutual connections</Text>
-            </View>
-          </View>
-          
-          <View style={styles.actionSection}>
-            <TouchableOpacity style={[
-              styles.followButton,
-              follower.isFollowing ? styles.followingButton : styles.followButton
-            ]}>
-              <Text style={[
-                styles.followButtonText,
-                follower.isFollowing ? styles.followingButtonText : styles.followButtonText
-              ]}>
-                {follower.isFollowing ? 'Following' : 'Follow'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <View style={styles.cardInner}>
+        <Image source={{ uri: item.avatar }} style={styles.avatar} />
+        <View style={styles.userMeta}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.role}>{item.role}</Text>
         </View>
-      ))}
-    </ScrollView>
+        <TouchableOpacity style={styles.menuButton}>
+          <Text style={styles.menuEllipsis}>{'\u22EE'}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container} showsVerticalScrollIndicator={false}>
+         {/* Search and Filter Section */}
+         <View style={styles.searchFilterSection}>
+        <View style={styles.searchBar}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search..."
+            placeholderTextColor={COLORS.textSecondary}
+          />
+        </View>
+        
+        <View style={[Style.row, Style.alignEnd, Style.justifyEnd]}>
+          <TouchableOpacity style={[Style.row, Style.alignCenter, styles.filterButton]}>
+            <Text style={[Style.font16, Style.semibold, Style.textPrimary]}>Filters</Text>
+            <Text style={styles.filterIcon}>☰</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[Style.row, Style.alignCenter, styles.sortButton]}>
+            <Text style={[Style.font16, Style.textSecondary]}>Sort By: </Text>
+            <Text style={[Style.font16, Style.semibold, Style.textPrimary]}>Featured</Text>
+            <Text style={styles.sortChevron}>⌄</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <Spacing/>
+      <FlatList
+        data={SAMPLE_FOLLOWERS}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={styles.listContent}
+        scrollEnabled={false}
+        ListFooterComponent={<View style={{ height: 24 }} />}
+      />
+    </View>
   );
 };
 
 export default FollowersTab;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 20,
+  searchFilterSection: {
+    backgroundColor: COLORS.white,
+    ...Style.hpadding,
+    paddingVertical: 16,
+    marginBottom: 1,
   },
-  header: {
-    marginBottom: 20,
+  searchBar: {
+    ...Style.row,
+    ...Style.alignCenter,
+    backgroundColor: COLORS.white,
+    ...Style.border,
+    ...Style.rounded8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    ...Style.marginBottom16,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
+  searchIcon: {
+    fontSize: 16,
+    marginRight: 8,
     color: COLORS.textSecondary,
   },
-  followerCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    ...Style.cardShadow,
-  },
-  followerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchInput: {
     flex: 1,
+    fontSize: 16,
+    color: COLORS.textPrimary,
   },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: COLORS.lightGray,
+  filterIcon: {
+    fontSize: 18,
+    marginLeft: 6,
+    color: COLORS.textPrimary,
+  },
+  filterButton: {
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  sortButton: {
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  sortChevron: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+  },
+
+  listContent: {
+    paddingBottom: 8,
+    paddingHorizontal:16,
+  },
+  card: {
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    marginBottom: 16,
+    marginHorizontal:5,
+    // iOS shadow
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 6 },
+    // Android
+    elevation: 3,
+  },
+  cardInner: {
+    paddingVertical: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
-  avatarText: {
-    fontSize: 24,
+  avatar: {
+    width: 92,
+    height: 92,
+    borderRadius: 46,
+    marginBottom: 16,
   },
-  followerDetails: {
-    flex: 1,
+  userMeta: {
+    alignItems: 'center',
   },
-  followerName: {
+  name: {
     fontSize: 16,
-    fontWeight: '600',
     color: COLORS.textPrimary,
-    marginBottom: 2,
+    ...Style.semibold,
+    marginBottom: 6,
   },
-  followerUsername: {
+  role: {
     fontSize: 14,
     color: COLORS.textSecondary,
-    marginBottom: 4,
+    ...Style.light
   },
-  mutualText: {
-    fontSize: 12,
+  menuButton: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    padding: 4,
+  },
+  menuEllipsis: {
+    fontSize: 20,
     color: COLORS.textSecondary,
-  },
-  actionSection: {
-    marginLeft: 12,
-  },
-  followButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: COLORS.buttonPrimary,
-  },
-  followingButton: {
-    backgroundColor: COLORS.lightGray,
-  },
-  followButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.white,
-  },
-  followingButtonText: {
-    color: COLORS.textPrimary,
   },
 });

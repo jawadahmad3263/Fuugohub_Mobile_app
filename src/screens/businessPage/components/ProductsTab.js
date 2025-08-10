@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, Image, Pressable } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
 import Spacing from '../../../components/common/Spacing';
+import { useNavigation } from '@react-navigation/native';
 
 const ProductsTab = ({ListHeaderComponent}) => {
+    const navigation = useNavigation();
   const products = [
     {
       id: 1,
@@ -49,7 +51,8 @@ const ProductsTab = ({ListHeaderComponent}) => {
   ];
 
   const renderProductItem = ({ item }) => (
-    <View style={styles.productCard}>
+    <Pressable onPress={() => navigation.navigate('ProductDetailsScreen', { product: item })}
+     style={styles.productCard}>
       {/* Product Image */}
       <View style={styles.productImageContainer}>
         <Image source={{ uri: item.image }} style={styles.productImage} />
@@ -74,7 +77,7 @@ const ProductsTab = ({ListHeaderComponent}) => {
           </Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (

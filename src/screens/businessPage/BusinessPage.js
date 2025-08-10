@@ -13,7 +13,7 @@ import OthersTab from './components/OthersTab'
 const BusinessPage = () => {
   const [activeTab, setActiveTab] = useState('Products')
 
-  const tabs = ['Products', 'Drops', 'Followers', 'Others']
+  const tabs = ['Products', 'Drops', 'Followers', 'Other Details']
 
   const handleTabPress = (tab) => {
     setActiveTab(tab)
@@ -64,7 +64,7 @@ const BusinessPage = () => {
         return <DropsTab />
       case 'Followers':
         return <FollowersTab />
-      case 'Others':
+      case 'Other Details':
         return <OthersTab />
       default:
         return <ProductsTab ListHeaderComponent={null} />
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
+    backgroundColor: COLORS.white,
+    paddingHorizontal: 10,
     paddingVertical: 16,
     marginBottom: 1,
   },
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     position: 'relative',
+   
   },
   tabText: {
     fontSize: 14,

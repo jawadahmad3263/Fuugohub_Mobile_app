@@ -22,6 +22,7 @@ import ShopScreen from '../screens/shop/components/ShopScreen';
 import EarningsScreen from '../screens/earnings/EarningsScreen';
 import AnalyticsScreen from '../screens/analytics/AnalyticsScreen';
 import BusinessPage from '../screens/businessPage/BusinessPage';
+import ProductDetailsScreen from '../screens/businessPage/ProductDetailsScreen';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -125,5 +126,10 @@ export const APP_SCREENS = {
     name: 'BusinessPage',
     component: BusinessPage,
     title: 'Business Page',
+  },
+  PRODUCT_DETAILS: {
+    name: 'ProductDetailsScreen',
+    component: ProductDetailsScreen,
+    title: 'Product Details',
   },
 };

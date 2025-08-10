@@ -14,7 +14,12 @@ const Header = ({
   onAvatarPress,
   showBackButton = true,
   showRightIcons = true,
-  notificationCount = 0
+  notificationCount = 0,
+  showBreadcrumb = false,
+  breadcrumbText = '',
+  showNotification = true,
+  showSettings = true,
+  showProfile = true
 }) => {
   const navigation = useNavigation()
   const handleBackPress = () => {
@@ -33,40 +38,51 @@ const Header = ({
               <Text style={{ fontSize: 24, color: '#000' }}>←</Text>
             </TouchableOpacity>
           )}
-          <Text style={styles.title}>{title}</Text>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>{title}</Text>
+            {showBreadcrumb && breadcrumbText && (
+              <Text style={styles.breadcrumb}>{breadcrumbText}</Text>
+            )}
+          </View>
         </View>
 
         {/* Right Side */}
         {showRightIcons && (
           <View style={styles.rightSection}>
             {/* Notification Icon with Badge */}
-            <TouchableOpacity 
-              style={styles.iconContainer}
-              onPress={onNotificationPress}
-            >
-              <NotificationIcon width={24} height={24} />
-              {notificationCount > 0 && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{notificationCount}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
+            {showNotification && (
+              <TouchableOpacity 
+                style={styles.iconContainer}
+                onPress={onNotificationPress}
+              >
+                <NotificationIcon width={24} height={24} />
+                {notificationCount > 0 && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{notificationCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            )}
 
             {/* Settings Icon */}
-            <TouchableOpacity 
-              style={styles.iconContainer}
-              onPress={onSettingsPress}
-            >
-              <SettingsIcon width={24} height={24} />
-            </TouchableOpacity>
+            {showSettings && (
+              <TouchableOpacity 
+                style={styles.iconContainer}
+                onPress={onSettingsPress}
+              >
+                <SettingsIcon width={24} height={24} />
+              </TouchableOpacity>
+            )}
 
             {/* Avatar */}
-            <TouchableOpacity 
-              style={styles.avatarContainer}
-              onPress={onAvatarPress}
-            >
-              <HeaderAvatar width={32} height={32} />
-            </TouchableOpacity>
+            {showProfile && (
+              <TouchableOpacity 
+                style={styles.avatarContainer}
+                onPress={onAvatarPress}
+              >
+                <HeaderAvatar width={32} height={32} />
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
@@ -97,10 +113,19 @@ const styles = StyleSheet.create({
     marginRight: 12,
     padding: 4,
   },
+  titleSection: {
+    flex: 1,
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 4,
+  },
+  breadcrumb: {
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 16,
   },
   rightSection: {
     flexDirection: 'row',

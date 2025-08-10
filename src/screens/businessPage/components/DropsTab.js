@@ -1,93 +1,76 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TextInput, TouchableOpacity } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
+import Spacing from '../../../components/common/Spacing';
 
 const DropsTab = () => {
   const drops = [
     {
       id: 1,
-      title: 'Summer Collection 2024',
-      status: 'Live',
-      views: '5.2K',
-      likes: '3.8K',
-      engagement: '89%',
-      endDate: '2 days left'
+      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop'
     },
     {
       id: 2,
-      title: 'Tech Gadgets Drop',
-      status: 'Scheduled',
-      views: '2.1K',
-      likes: '1.5K',
-      engagement: '76%',
-      endDate: '5 days left'
+      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop'
     },
     {
       id: 3,
-      title: 'Fashion Week Special',
-      status: 'Ended',
-      views: '8.7K',
-      likes: '6.2K',
-      engagement: '92%',
-      endDate: 'Ended'
+      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop'
+    },
+    {
+      id: 4,
+      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop'
     }
   ];
 
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Drops</Text>
-        <Text style={styles.headerSubtitle}>Your business drops and campaigns</Text>
-      </View>
-      
-      {drops.map((drop) => (
-        <View key={drop.id} style={styles.dropCard}>
-          <View style={styles.dropHeader}>
-            <Text style={styles.dropTitle}>{drop.title}</Text>
-            <View style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(drop.status) }
-            ]}>
-              <Text style={styles.statusText}>{drop.status}</Text>
-            </View>
-          </View>
-          
-          <View style={styles.dropStats}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Views</Text>
-              <Text style={styles.statValue}>{drop.views}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Likes</Text>
-              <Text style={styles.statValue}>{drop.likes}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Engagement</Text>
-              <Text style={styles.statValue}>{drop.engagement}</Text>
-            </View>
-          </View>
-          
-          <View style={styles.dropFooter}>
-            <Text style={styles.endDateText}>{drop.endDate}</Text>
-          </View>
-        </View>
-      ))}
-    </ScrollView>
+  const renderDropItem = ({ item }) => (
+    <View style={styles.dropCard}>
+      <Image source={{ uri: item.image }} style={styles.dropImage} />
+    </View>
   );
-};
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Live':
-      return COLORS.success;
-    case 'Scheduled':
-      return COLORS.warning;
-    case 'Ended':
-      return COLORS.textSecondary;
-    default:
-      return COLORS.lightGray;
-  }
+  return (
+    <View style={styles.container}>
+      {/* Search and Filter Section */}
+      <View style={styles.searchFilterSection}>
+        <View style={styles.searchBar}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search..."
+            placeholderTextColor={COLORS.textSecondary}
+          />
+        </View>
+        
+        <View style={[Style.row, Style.alignEnd, Style.justifyEnd]}>
+          <TouchableOpacity style={[Style.row, Style.alignCenter, styles.filterButton]}>
+            <Text style={[Style.font16, Style.semibold, Style.textPrimary]}>Filters</Text>
+            <Text style={styles.filterIcon}>☰</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[Style.row, Style.alignCenter, styles.sortButton]}>
+            <Text style={[Style.font16, Style.textSecondary]}>Sort By: </Text>
+            <Text style={[Style.font16, Style.semibold, Style.textPrimary]}>Featured</Text>
+            <Text style={styles.sortChevron}>⌄</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Drops Grid List */}
+      <FlatList
+        data={drops}
+        renderItem={renderDropItem}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.dropsList}
+        style={styles.flatList}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        ListFooterComponent={<Spacing val={100}/>}
+      />
+    </View>
+  );
 };
 
 export default DropsTab;
@@ -95,79 +78,76 @@ export default DropsTab;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    backgroundColor: COLORS.white,
   },
-  header: {
-    marginBottom: 20,
+  searchFilterSection: {
+    backgroundColor: COLORS.white,
+    ...Style.hpadding,
+    paddingVertical: 16,
+    marginBottom: 1,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: 4,
+  searchBar: {
+    ...Style.row,
+    ...Style.alignCenter,
+    backgroundColor: COLORS.white,
+    ...Style.border,
+    ...Style.rounded8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    ...Style.marginBottom16,
   },
-  headerSubtitle: {
-    fontSize: 14,
+  searchIcon: {
+    fontSize: 16,
+    marginRight: 8,
     color: COLORS.textSecondary,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: COLORS.textPrimary,
+  },
+  filterIcon: {
+    fontSize: 18,
+    marginLeft: 6,
+    color: COLORS.textPrimary,
+  },
+  filterButton: {
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  sortButton: {
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  sortChevron: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+  },
+  flatList: {
+    flex: 1,
+  },
+  dropsList: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    
+  },
+  row: {
+    justifyContent: 'space-between',
   },
   dropCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+   
+    marginBottom: 16,
     ...Style.cardShadow,
+    marginHorizontal: 6,
+    width: '47%',
+    overflow: 'hidden',
   },
-  dropHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  dropTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    flex: 1,
-    marginRight: 12,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: COLORS.white,
-  },
-  dropStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-  },
-  dropFooter: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderLight,
-    paddingTop: 12,
-  },
-  endDateText: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
+  dropImage: {
+    width: '100%',
+    height: 285,
+    resizeMode: 'cover',
   },
 });

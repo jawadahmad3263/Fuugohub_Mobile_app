@@ -1,65 +1,52 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
 
 const OthersTab = () => {
-  const otherItems = [
-    {
-      id: 1,
-      title: 'Business Analytics',
-      description: 'View detailed insights about your business performance',
-      icon: '📊',
-      action: 'View Analytics'
-    },
-    {
-      id: 2,
-      title: 'Settings & Preferences',
-      description: 'Manage your business page settings and preferences',
-      icon: '⚙️',
-      action: 'Configure'
-    },
-    {
-      id: 3,
-      title: 'Help & Support',
-      description: 'Get help and contact customer support',
-      icon: '❓',
-      action: 'Get Help'
-    },
-    {
-      id: 4,
-      title: 'Business Verification',
-      description: 'Verify your business to unlock additional features',
-      icon: '✅',
-      action: 'Verify Now'
-    }
-  ];
-
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Other Options</Text>
-        <Text style={styles.headerSubtitle}>Additional business tools and settings</Text>
+      {/* Description Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Description</Text>
+        <Text style={styles.descriptionText}>
+          Unlock Your Potential with Every Rep 💪{'\n\n'}
+          Welcome to your ultimate fitness destination! Whether you're a beginner or a seasoned athlete, we're here to guide you on your journey to strength, stamina, and self-confidence. From expert workouts and personalized plans to nutrition tips and motivation — this is more than just fitness. It's a lifestyle.
+        </Text>
+        
+        <View style={styles.featuresContainer}>
+          <Text style={styles.featureItem}>🔥 Workout Routines</Text>
+          <Text style={styles.separator}> | </Text>
+          <Text style={styles.featureItem}>🌳 Healthy Living</Text>
+          <Text style={styles.separator}> | </Text>
+          <Text style={styles.featureItem}>💥 Transformation Stories</Text>
+        </View>
       </View>
-      
-      {otherItems.map((item) => (
-        <TouchableOpacity key={item.id} style={styles.itemCard}>
-          <View style={styles.itemHeader}>
-            <View style={styles.iconContainer}>
-              <Text style={styles.itemIcon}>{item.icon}</Text>
-            </View>
-            <View style={styles.itemInfo}>
-              <Text style={styles.itemTitle}>{item.title}</Text>
-              <Text style={styles.itemDescription}>{item.description}</Text>
-            </View>
-          </View>
-          
-          <View style={styles.itemAction}>
-            <Text style={styles.actionText}>{item.action}</Text>
-            <Text style={styles.arrowIcon}>→</Text>
-          </View>
-        </TouchableOpacity>
-      ))}
+
+      {/* Address Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Address</Text>
+        
+        <View style={styles.addressItem}>
+          <Text style={styles.addressLabel}>City</Text>
+          <Text style={styles.addressValue}>Mountain view</Text>
+        </View>
+        
+        <View style={styles.addressItem}>
+          <Text style={styles.addressLabel}>State</Text>
+          <Text style={styles.addressValue}>California</Text>
+        </View>
+        
+        <View style={styles.addressItem}>
+          <Text style={styles.addressLabel}>Zip code</Text>
+          <Text style={styles.addressValue}>124721</Text>
+        </View>
+        
+        <View style={styles.addressItem}>
+          <Text style={styles.addressLabel}>Country</Text>
+          <Text style={styles.addressValue}>United states</Text>
+        </View>
+      </View>
     </ScrollView>
   );
 };
@@ -69,76 +56,55 @@ export default OthersTab;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLORS.white,
     paddingHorizontal: 16,
     paddingTop: 20,
   },
-  header: {
-    marginBottom: 20,
+  section: {
+    marginBottom: 32,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+  sectionTitle: {
+    ...Style.font20,
+    ...Style.semibold,
     color: COLORS.textPrimary,
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-  },
-  itemCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    ...Style.cardShadow,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     marginBottom: 16,
   },
-  iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: COLORS.lightGray,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  itemIcon: {
-    fontSize: 24,
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+  descriptionText: {
+    ...Style.font16,
+    lineHeight: 24,
     color: COLORS.textPrimary,
-    marginBottom: 4,
+    marginBottom: 20,
   },
-  itemDescription: {
+  featuresContainer: {
+    ...Style.row,
+    ...Style.alignCenter,
+    flexWrap: 'wrap',
+  },
+  featureItem: {
+    ...Style.font16,
+    color: COLORS.textPrimary,
+  },
+  separator: {
+    ...Style.font16,
+    color: COLORS.textSecondary,
+    marginHorizontal: 8,
+  },
+  addressItem: {
+    ...Style.row,
+    ...Style.justifyBetween,
+    ...Style.alignCenter,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.borderLight,
+  },
+  addressLabel: {
     fontSize: 14,
     color: COLORS.textSecondary,
-    lineHeight: 20,
+    ...Style.medium
   },
-  itemAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderLight,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.buttonPrimary,
-  },
-  arrowIcon: {
-    fontSize: 16,
-    color: COLORS.buttonPrimary,
-    fontWeight: 'bold',
+  addressValue: {
+    ...Style.font16,
+    color: COLORS.textPrimary,
+    ...Style.semibold
   },
 });

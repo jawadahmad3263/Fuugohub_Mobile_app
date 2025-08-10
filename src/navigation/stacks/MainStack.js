@@ -164,6 +164,7 @@ const MainStack = () => {
       <Stack.Screen name="EarningsScreen" component={APP_SCREENS.EARNINGS.component} />
       <Stack.Screen name="Analytics" component={APP_SCREENS.ANALYTICS.component} />
       <Stack.Screen name="BusinessPage" component={APP_SCREENS.BUSINESS_PAGE.component} />
+      <Stack.Screen name="ProductDetailsScreen" component={APP_SCREENS.PRODUCT_DETAILS.component} />
       {/* Add other main screens here */}
     </Stack.Navigator>
   );
