@@ -23,6 +23,7 @@ import EarningsScreen from '../screens/earnings/EarningsScreen';
 import AnalyticsScreen from '../screens/analytics/AnalyticsScreen';
 import BusinessPage from '../screens/businessPage/BusinessPage';
 import ProductDetailsScreen from '../screens/businessPage/ProductDetailsScreen';
+import OtpVerification from '../screens/auth/OtpVerification';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -55,6 +56,11 @@ export const AUTH_SCREENS = {
     name: 'ImageUploadScreen',
     component: ImageUploadScreen,
     title: 'Image Upload',
+  },
+  OTP_VERIFICATION: {
+    name: 'OtpVerification',
+    component: OtpVerification,
+    title: 'Otp Verification',
   },
 };
 

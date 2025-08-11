@@ -26,16 +26,15 @@ import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
 import { Post } from "../../services/api";
-import { validateEmail } from "../../utils/common";
-const RegisterScreen = ({ navigation }) => {
+import { setVerificationToken, validateEmail } from "../../utils/common";
+ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-const handleStart = () => {
-  navigation.navigate('AccountDetails')
-  ret
+const handleStart = async () => {
+
   
 if(!validateEmail(email)){
   setError('Please enter a valid email')
@@ -45,11 +44,18 @@ if(!validateEmail(email)){
     email: email,
   }
   setLoading(true)
-  Post({endpoint: '/auth/register', data: data}).then((res) => {
+  Post({endpoint: 'auth/signup/email', data: data}).then(async(res) => {
     console.log(res)
     setLoading(false)
-    navigation.navigate('AccountDetails')
+    if(res?.data?.verificationToken){
+     await setVerificationToken(res?.data?.verificationToken)
+      navigation.navigate('OtpVerification', {email: email, verificationToken: res?.data?.verificationToken})
+    }else{
+      Alert.alert( 'Error', res?.message)
+    }
+    // navigation.navigate('AccountDetails')
   }).catch((err) => {
+    Alert.alert( 'Error', err.message)
     console.log(err)
     setLoading(false)
   })  
@@ -154,12 +160,12 @@ if(!validateEmail(email)){
                 Continue as a <Text style={styles.guestText}>Guest</Text>
               </Text>
               <Text style={styles.footerText}>
-                Don't have an account?{" "}
+              Already have an account?{" "}
                 <Text
                   style={styles.signupText}
-                  onPress={() => navigation.navigate("Register")}
+                  onPress={() => navigation.navigate("Login")}
                 >
-                  Sign Up
+                  Sign In
                 </Text>
               </Text>
             </View>

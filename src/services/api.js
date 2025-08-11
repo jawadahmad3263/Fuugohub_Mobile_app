@@ -3,7 +3,7 @@ import { getUserToken } from '../utils/common'
 
  
 // import { BASE_URL } from '../utils/constant'
-const BASE_URL = 'https://fuugohug-production.up.railway.app'
+const BASE_URL = 'https://fuugohug-production.up.railway.app/api/'
 // 'localhost/api/v1'
 axios.defaults.baseURL = BASE_URL
  

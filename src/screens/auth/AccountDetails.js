@@ -10,6 +10,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import RadioIcon  from '../../assets/svg/radio-btn.svg'
@@ -18,27 +19,89 @@ import InputText from '../../components/forms/TextInput'
 import EyeIcon from '../../assets/svg/ic-solar_eye-bold.svg'
 import PhoneNumberInput from '../../components/forms/PhoneNumberInput';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { Post } from '../../services/api';
+import { setUserToken } from '../../utils/common';
 const AccountDetails = () => {
     const navigation = useNavigation()
+    const route = useRoute()
   const [formData, setFormData] = useState({
-    firstName: 'John',
-    lastName: 'David',
-    phoneNumber: '212 456 7890',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
-    gender: 'male',
-    age: 'under13',
+    gender: '',
+    age: '',
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [loading, setLoading] = useState(false)
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleNext  = () =>{
-    navigation.navigate('UserPreferences')
+  const handleNext = () => {
+    // Validate required fields
+    if (!formData.firstName) {
+      Alert.alert('Error', 'Please enter your first name');
+      return;
+    }
+    if (!formData.lastName) {
+      Alert.alert('Error', 'Please enter your last name');
+      return;
+    }
+    if (!formData.phoneNumber) {
+      Alert.alert('Error', 'Please enter your phone number');
+      return;
+    }
+    if (!formData.password) {
+      Alert.alert('Error', 'Please enter a password');
+      return;
+    }
+    if(formData.password !== formData.confirmPassword){
+      Alert.alert('Error', 'Password and confirm password do not match');
+      return;
+    }
+    if (!formData.gender) {
+      Alert.alert('Error', 'Please select your gender');
+      return;
+    }
+    if (!formData.age) {
+      Alert.alert('Error', 'Please select your age group');
+      return;
+    }
+    const email = route?.params?.email || route?.params?.data?.email || 'fg12@yopmail.com';
+    if (!email) {
+      Alert.alert('Error', 'Email is required');
+      return;
+    }
+    setLoading(true)
+    const data = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phoneNumber: formData.phoneNumber ? "+33" + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
+      password: formData.password,
+      email: email||'fg12@yopmail.com',
+      gender: formData.gender,
+      age: formData.age,
+    }
+
+    
+    // Alert.alert('data', JSON.stringify(data))
+ 
+    Post({endpoint: 'auth/signup/account-details', data: data}).then(async(res) => {
+      console.log('res', res)
+      const token = res?.data?.token || res?.data?.accessToken || res?.data?.refreshToken || firstName
+      await setUserToken(token)
+      setLoading(false)
+      navigation.navigate('UserPreferences')
+    }).catch((err) => {
+      Alert.alert('Error', err?.message)
+      console.log('err', err)
+      setLoading(false)
+    })
   }
 
   const RadioButton = ({ selected, onPress, label }) => (
@@ -202,6 +265,7 @@ const AccountDetails = () => {
                 style={styles.nextButton}
                 textStyle={styles.nextButtonText}
                 onPress={handleNext}
+                loading={loading}
             />
           </View>
         </View>

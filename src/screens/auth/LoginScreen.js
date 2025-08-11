@@ -3,7 +3,7 @@
  * User authentication login screen
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import CustomTextInput from "../../components/forms/TextInput";
 import PrimaryButton from "../../components/common/PrimaryButton";
@@ -23,10 +24,26 @@ import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedE
 import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
-
+import { getVerificationToken } from "../../utils/common";
+import { useFocusEffect } from "@react-navigation/native";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("demo@minimals.cc");
   const [password, setPassword] = useState("");
+
+  useFocusEffect(
+    React.useCallback(() => {
+      verificationToken()
+    }, [])
+  );
+
+  const verificationToken = async () => {
+    const token = await getVerificationToken()
+    if(token){
+      navigation.navigate('OtpVerification', {verificationToken: token})
+    }else{
+      navigation.navigate('AccountDetails')
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
