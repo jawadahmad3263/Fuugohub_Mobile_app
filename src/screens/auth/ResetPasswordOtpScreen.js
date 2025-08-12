@@ -87,6 +87,7 @@ const OtpVerification = ({ navigation }) => {
           const params = {
             ...res?.data,
             email: email,
+            verificationToken: res?.data?.verificationToken,
           }
           navigation.navigate(AUTH_SCREENS.RESET_PASSWORD.name, params);
           setLoading(false)

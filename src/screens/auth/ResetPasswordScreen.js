@@ -23,16 +23,21 @@ import PrimaryButton from "../../components/common/PrimaryButton";
 import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
-import { Post } from "../../services/api";
+import { Patch, Post } from "../../services/api";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { all } from "axios";
 
-const ResetPasswordScreen = ({ navigation, route }) => {
+const ResetPasswordScreen = ({ }) => {
+
+    const navigation= useNavigation()
   const [password, setPassword] = useState("");
+  const route = useRoute()
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+ 
   const handleChangePassword = () => {
     if (!password) {
       setError("Please enter a password");
@@ -58,10 +63,11 @@ const ResetPasswordScreen = ({ navigation, route }) => {
     
     // Simulate API call
     const data  ={
-        passwordResetToken: route.params.verificationToken,
+        passwordResetToken: route?.params?.verificationToken || route?.params?.passwordResetToken,
         password: password
     }
-    Post({endpoint: 'auth/reset-password', data: data})
+   
+    Patch({endpoint: 'auth/reset-password', data: data})
     .then((res)=>{
       console.log('RES', JSON.stringify(res))
       setLoading(false)
@@ -73,6 +79,9 @@ const ResetPasswordScreen = ({ navigation, route }) => {
       ])
     })
     .catch((err)=>{
+        setLoading(false)
+        Alert.alert("ERROR",err.response?.data?.message)
+        Alert.alert(JSON.stringify(route?.params))
       console.log('ERR', JSON.stringify(err))
     })
  
