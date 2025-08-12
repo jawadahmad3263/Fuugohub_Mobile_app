@@ -24,6 +24,8 @@ import AnalyticsScreen from '../screens/analytics/AnalyticsScreen';
 import BusinessPage from '../screens/businessPage/BusinessPage';
 import ProductDetailsScreen from '../screens/businessPage/ProductDetailsScreen';
 import OtpVerification from '../screens/auth/OtpVerification';
+import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
+import ResetPasswordOtpScreen from '../screens/auth/ResetPasswordOtpScreen';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -61,6 +63,16 @@ export const AUTH_SCREENS = {
     name: 'OtpVerification',
     component: OtpVerification,
     title: 'Otp Verification',
+  },
+  RESET_PASSWORD: {
+    name: 'ResetPassword',
+    component: ResetPasswordScreen,
+    title: 'Reset Password',
+  },
+  RESET_PASSWORD_OTP: {
+    name: 'ResetPasswordOtp',
+    component: ResetPasswordOtpScreen,
+    title: 'Reset Password OTP',
   },
 };
 

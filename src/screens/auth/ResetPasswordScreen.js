@@ -1,6 +1,6 @@
 /**
- * Forgot Password Screen
- * Password reset screen
+ * Reset Password Screen
+ * Password reset screen with new password fields
  */
 
 import React, { useState } from "react";
@@ -23,44 +23,59 @@ import PrimaryButton from "../../components/common/PrimaryButton";
 import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
-import { Patch, Post } from "../../services/api";
-import { AUTH_SCREENS } from "../../navigation/screens";
-import { validateEmail } from "../../utils/common";
+import { Post } from "../../services/api";
 
-const ForgotPasswordScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
+const ResetPasswordScreen = ({ navigation, route }) => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('')
-  const handleResetPassword = () => {
-    if (!validateEmail(email)) {
-      setError("Please enter your email address");
-      Alert.alert("Error", "Please enter your email address");
+  const [error, setError] = useState("");
+
+  const handleChangePassword = () => {
+    if (!password) {
+      setError("Please enter a password");
+      Alert.alert("Error", "Please enter a password");
       return;
     }
 
-    // TODO: Implement password reset logic
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      Alert.alert("Error", "Password must be at least 6 characters");
+      return;
+    }
 
-    const body = {
-      email: email,
-    };
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
 
-   
+    // TODO: Implement password change logic
+    console.log('Password change attempt:', { password, confirmPassword });
     setLoading(true);
-    setError('')
-      Post({endpoint: 'auth/forgot-password', data: body})
-      .then((res) => {
-        const params = {
-          ...res?.data,
-          email: email,
-        };
-        setLoading(false);
-        navigation.navigate(AUTH_SCREENS.RESET_PASSWORD_OTP.name, params);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-        Alert.alert("Error", err?.message);
-      });
+    
+    // Simulate API call
+    const data  ={
+        passwordResetToken: route.params.verificationToken,
+        password: password
+    }
+    Post({endpoint: 'auth/reset-password', data: data})
+    .then((res)=>{
+      console.log('RES', JSON.stringify(res))
+      setLoading(false)
+      Alert.alert('Success', 'Password changed successfully!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Login'),
+        },
+      ])
+    })
+    .catch((err)=>{
+      console.log('ERR', JSON.stringify(err))
+    })
+ 
   };
 
   return (
@@ -96,26 +111,36 @@ const ForgotPasswordScreen = ({ navigation }) => {
             </Text>
             <Spacing type="v" val={10} />
             <Text style={[Style.font12, Style.textSecondary, Style.textCenter]}>
-              We'll send you an email with a link to reset the password to your
-              account
+              Create a strong new password to secure your FuugoHub account
             </Text>
             <Spacing type="v" val={30} />
             {/* Form */}
             <View style={styles.form}>
               <CustomTextInput
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                placeholder="demo@minimals.cc"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="6+ characters"
+                secureTextEntry={!showPassword}
+                rightIcon={showPassword ? "eye-off" : "eye"}
+                onRightIconPress={() => setShowPassword(!showPassword)}
+                error={error}
+              />
+              <CustomTextInput
+                label="Confirm Password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="6+ characters"
+                secureTextEntry={!showConfirmPassword}
+                rightIcon={showConfirmPassword ? "eye-off" : "eye"}
+                onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
                 error={error}
               />
               <PrimaryButton
-                title="Get Code"
-                onPress={handleResetPassword}
-                style={styles.resetButton}
-                textStyle={styles.resetButtonText}
+                title="Change Password"
+                onPress={handleChangePassword}
+                style={styles.changePasswordButton}
+                textStyle={styles.changePasswordButtonText}
                 loading={loading}
               />
             </View>
@@ -142,13 +167,13 @@ const ForgotPasswordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
   },
   container: {
     flexGrow: 1,
     alignItems: "center",
     padding: 24,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
   },
   logo: {
     width: 192,
@@ -160,12 +185,12 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 18,
   },
-  resetButton: {
+  changePasswordButton: {
     marginTop: 0,
     marginBottom: 10,
     width: "100%",
   },
-  resetButtonText: {
+  changePasswordButtonText: {
     fontSize: 20,
     fontWeight: "bold",
   },
@@ -186,4 +211,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default ResetPasswordScreen;

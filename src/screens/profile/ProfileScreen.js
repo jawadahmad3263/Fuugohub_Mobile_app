@@ -26,6 +26,9 @@ import COLORS from '../../style/colors';
 import Spacing from '../../components/common/Spacing';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import { APP_SCREENS } from '../../navigation/screens';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../store/slices/userSlice';
+import { deleteUserToken, removeVerificationToken } from '../../utils/common';
 
 const ProfileScreen = ({ navigation }) => {
   const [userProfile] = useState({
@@ -33,6 +36,7 @@ const ProfileScreen = ({ navigation }) => {
     description: 'Lorem ipsum dummy text..',
     isOnline: true,
   });
+  const dispatch =useDispatch()
 
   const menuItems = [
     {
@@ -81,6 +85,11 @@ const ProfileScreen = ({ navigation }) => {
           text: 'Logout',
           style: 'destructive',
           onPress: () => {
+            dispatch(setUser(null))
+            deleteUserToken()
+            removeVerificationToken()
+
+            navigation.navigate('Auth')
             console.log('User logged out');
             Alert.alert('Success', 'Logout functionality to be implemented');
           },

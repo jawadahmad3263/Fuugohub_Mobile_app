@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { Post } from '../../services/api';
 import { setUserToken } from '../../utils/common';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../store/slices/userSlice';
 const AccountDetails = () => {
     const navigation = useNavigation()
     const route = useRoute()
@@ -38,10 +40,12 @@ const AccountDetails = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false)
+
+  const dispatch = useDispatch()
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
+ 
   const handleNext = () => {
     // Validate required fields
     if (!formData.firstName) {
@@ -72,7 +76,7 @@ const AccountDetails = () => {
       Alert.alert('Error', 'Please select your age group');
       return;
     }
-    const email = route?.params?.email || route?.params?.data?.email || 'fg12@yopmail.com';
+    const email = route?.params?.email || route?.params?.data?.email || '';
     if (!email) {
       Alert.alert('Error', 'Email is required');
       return;
@@ -81,26 +85,33 @@ const AccountDetails = () => {
     const data = {
       firstName: formData.firstName,
       lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber ? "+33" + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
+      phone: formData.phoneNumber ? "+33" + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
       password: formData.password,
-      email: email||'fg12@yopmail.com',
+      email: email,
       gender: formData.gender,
-      age: formData.age,
+      age: Number(formData.age),
     }
-
-    
-    // Alert.alert('data', JSON.stringify(data))
  
-    Post({endpoint: 'auth/signup/account-details', data: data}).then(async(res) => {
+    Post({endpoint: '/auth/signup/account-details', data: data}).then(async(res) => {
       console.log('res', res)
-      const token = res?.data?.token || res?.data?.accessToken || res?.data?.refreshToken || firstName
+      setLoading(false)
+      dispatch(setUser(res?.data))
+      const token = res?.data?.token
       await setUserToken(token)
-      setLoading(false)
-      navigation.navigate('UserPreferences')
+      
+     
+      const params ={
+        ...res?.data,
+      }
+     
+      navigation.navigate('UserPreferences', params)
+
     }).catch((err) => {
-      Alert.alert('Error', err?.message)
-      console.log('err', err)
       setLoading(false)
+      Alert.alert("ERROR",err.message)
+
+      Alert.alert('Error', err?.response?.data?.message)
+
     })
   }
 
@@ -240,19 +251,19 @@ const AccountDetails = () => {
             <Text style={styles.label}>Age</Text>
             <View style={styles.ageGroup}>
               <RadioButton
-                selected={formData.age === 'under13'}
-                onPress={() => handleInputChange('age', 'under13')}
-                label="Under 13"
+                selected={formData.age === '13'}
+                onPress={() => handleInputChange('age', '13')}
+                label="13"
               />
               <RadioButton
-                selected={formData.age === '13to18'}
-                onPress={() => handleInputChange('age', '13to18')}
-                label="13 to 18"
+                selected={formData.age === '14'}
+                onPress={() => handleInputChange('age', '14')}
+                label="14"
               />
               <RadioButton
-                selected={formData.age === '18older'}
-                onPress={() => handleInputChange('age', '18older')}
-                label="18 or Older"
+                selected={formData.age === '18'}
+                onPress={() => handleInputChange('age', '18')}
+                label="18"
               />
             </View>
           </View>

@@ -24,25 +24,80 @@ import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedE
 import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
-import { getVerificationToken } from "../../utils/common";
+import { getUserToken, getVerificationToken, setUserToken } from "../../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
+import { Post } from "../../services/api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/slices/userSlice";
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("demo@minimals.cc");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false)
+  const[erros,setErros] = useState({
+    email: '',
+    password: '',
+  })
+
+
+  const dispatch = useDispatch()
 
   useFocusEffect(
     React.useCallback(() => {
-      verificationToken()
+      userToken()
+    
     }, [])
   );
 
-  const verificationToken = async () => {
-    const token = await getVerificationToken()
+ 
+  const userToken = async () => {
+    const token = await getUserToken()
+    const verificationToken = await getVerificationToken()
     if(token){
-      navigation.navigate('OtpVerification', {verificationToken: token})
+      navigation.navigate('Main')
+    }else if(verificationToken) {
+      navigation.navigate('OtpVerification', {verificationToken: verificationToken})
     }else{
-      navigation.navigate('AccountDetails')
+      navigation.navigate('Login')
     }
+  }
+
+  const handleLogin = () => {
+    if(!email){
+      setErros({...erros, email: 'Please enter your email'})
+      return
+    }
+    if(!password){
+      setErros({...erros, password: 'Please enter your password'})
+      return
+    }
+    if(erros.email || erros.password){
+      Alert.alert('Error', 'Please enter your email and password')
+      return
+    }
+    const data = {
+      email: email,
+      password: password,
+    }
+    setLoading(true)
+    setErros({
+      email: '',
+      password: '',
+    })
+    Post({endpoint: '/auth/login', data: data})
+    .then(async(res) => {
+      console.log('RES', JSON.stringify(res))
+      dispatch(setUser(res?.data))
+      const token = res?.data?.token
+      await setUserToken(token)
+      setLoading(false)
+     
+      navigation.navigate('Main')
+    })
+    .catch((err) => {
+      setLoading(false)
+      Alert.alert('Error', err?.response?.data?.message)
+      console.log('ERR', JSON.stringify(err))
+    })
   }
 
   return (
@@ -91,6 +146,7 @@ const LoginScreen = ({ navigation }) => {
                 placeholder="Email address"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                error={erros.email}
               />
               <CustomTextInput
                 label="Password"
@@ -98,6 +154,7 @@ const LoginScreen = ({ navigation }) => {
                 onChangeText={setPassword}
                 placeholder="6+ characters"
                 secureTextEntry
+                error={erros.password}
               />
               <TouchableOpacity
                 style={styles.forgotPassword}
@@ -107,9 +164,10 @@ const LoginScreen = ({ navigation }) => {
               </TouchableOpacity>
               <PrimaryButton
                 title="Sign in"
-                onPress={() => {}}
+                onPress={() => handleLogin()}
                 style={styles.signInButton}
                 textStyle={styles.signInButtonText}
+                loading={loading}
               />
             </View>
 
