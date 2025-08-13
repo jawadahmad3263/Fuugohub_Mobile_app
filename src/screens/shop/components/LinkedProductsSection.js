@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import COLORS from '../../../style/colors';
 import PrimaryButton from '../../../components/common/PrimaryButton';
-
+import DeleIcon from '../../../assets/svg/delete-icon.svg'
 const Dropdown = ({ label }) => (
   <View style={styles.dropdown}>
     <Text style={styles.dropdownText}>{label}</Text>
@@ -18,7 +18,8 @@ const LinkedRow = ({ label = 'Earbuds' }) => (
         <Text style={styles.linkedBadgeText}>Linked</Text>
       </View>
       <TouchableOpacity style={styles.deleteButton}>
-        <Text style={styles.deleteIcon}>🗑</Text>
+        <DeleIcon color={COLORS.primary} width={20} height={20}/>
+        {/* <Text style={styles.deleteIcon}>🗑</Text> */}
       </TouchableOpacity>
     </View>
   </View>
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D1FBE3',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 8,
     marginRight: 10,
   },
   linkedBadgeText: {
@@ -139,8 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   deleteButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 5,
+    backgroundColor:'#FF563029',
+    borderRadius:6,
+    // width:26,
+    // height:24
   },
   deleteIcon: {
     fontSize: 16,

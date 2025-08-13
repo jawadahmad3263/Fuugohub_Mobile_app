@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import DropdownIcon from "../../assets/svg/drop-down.svg";
 import COLORS from "../../style/colors";
+import Style from "../../style/Style";
 
 const PhoneNumberInput = ({
   value,
@@ -21,7 +22,7 @@ const PhoneNumberInput = ({
   return (
     <View style={styles.container}>
       {/* Label */}
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label]}>{label}</Text>
 
       {/* Input Container */}
       <View style={styles.inputContainer}>
@@ -56,9 +57,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#020817",
+    ...Style.font14,
+    ...Style.bold,
+    ...Style.textPrimary,
     marginBottom: 12,
   },
   inputContainer: {

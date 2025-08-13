@@ -17,13 +17,14 @@ import RadioIcon  from '../../assets/svg/radio-btn.svg'
 import PrimaryButton from '../../components/common/PrimaryButton';
 import InputText from '../../components/forms/TextInput'
 import EyeIcon from '../../assets/svg/ic-solar_eye-bold.svg'
-import PhoneNumberInput from '../../components/forms/PhoneNumberInput';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { Post } from '../../services/api';
 import { setUserToken } from '../../utils/common';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/userSlice';
+import Style from '../../style/Style';
+import PhoneNumInput from '../../components/forms/PhoneInput';
 
 
 const AccountDetails = () => {
@@ -33,6 +34,7 @@ const AccountDetails = () => {
     firstName: '',
     lastName: '',
     phoneNumber: '',
+    phoneCountryCode: '+33', // Add country code tracking
     password: '',
     confirmPassword: '',
     gender: '',
@@ -56,6 +58,7 @@ const AccountDetails = () => {
   const dispatch = useDispatch()
   
   const handleInputChange = (field, value) => {
+    
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
@@ -79,7 +82,10 @@ const AccountDetails = () => {
       
       case 'phoneNumber':
         if (!value) return 'Please enter your phone number';
-        if (value.replace(/[^0-9]/g, '').length < 9) return 'Please enter a valid phone number';
+        // Remove all non-digit characters and check length
+        const cleanPhone = value.replace(/[^0-9]/g, '');
+        if (cleanPhone.length < 7) return 'Please enter a valid phone number';
+        if (cleanPhone.length > 15) return 'Phone number is too long';
         return '';
       
       case 'password':
@@ -127,7 +133,7 @@ const AccountDetails = () => {
       return;
     }
 
-    const email = route?.params?.email || route?.params?.data?.email || '';
+    const email = route?.params?.email || route?.params?.data?.email;
     if (!email) {
       Alert.alert('Error', 'Email is required');
       return;
@@ -137,13 +143,13 @@ const AccountDetails = () => {
     const data = {
       firstName: formData.firstName,
       lastName: formData.lastName,
-      phone: formData.phoneNumber ? "+33" + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
+      phone: formData.phoneNumber ? formData.phoneCountryCode + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
       password: formData.password,
       email: email,
       gender: formData.gender,
       age: Number(formData.age),
     }
- 
+  
     Post({endpoint: '/auth/signup/account-details', data: data}).then(async(res) => {
       console.log('res', res)
       setLoading(false)
@@ -235,10 +241,18 @@ const AccountDetails = () => {
 
           {/* Phone Number */}
           <View style={styles.inputGroup}>
-            <PhoneNumberInput
+            {/* <PhoneNumberInput
             value={formData.phoneNumber}
             onChangeText={(value) => handleInputChange('phoneNumber', value)}
-            />
+            /> */}
+              <PhoneNumInput
+                value={formData.phoneNumber}
+                onChangeText={(value) => handleInputChange('phoneNumber', value)}
+                onChangeFormattedText={(formattedText) => handleInputChange('phoneNumber', formattedText)}
+                onChangeCountry={(country) => handleInputChange('phoneCountryCode', '+' + country.callingCode)}
+                placeholder="Enter phone number"
+                defaultCountry="FR"
+              />
             {errors.phoneNumber ? <Text style={styles.errorText}>{errors.phoneNumber}</Text> : null}
           </View>
 
@@ -347,7 +361,7 @@ const AccountDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#fff',
     paddingTop:35
   },
   scrollView: {
@@ -475,13 +489,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#020817',
+    ...Style.font14,
+    ...Style.bold,
+    ...Style.textPrimary,
     marginBottom: 12,
   },
   input: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#cdd7e5',
     borderRadius: 12,
