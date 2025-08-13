@@ -3,8 +3,9 @@ import React from 'react'
 import NotificationIcon from '../../assets/svg/notification-icon.svg'
 import SettingsIcon from '../../assets/svg/setting-icon.svg'
 import HeaderAvatar from '../../assets/svg/header-profile-avatar.svg'
-import BackIcon from '../../assets/svg/back-arrow-white.svg'
+import BackIcon from '../../assets/svg/back-arrow-black.svg'
 import { useNavigation } from '@react-navigation/native'
+import COLORS from '../../style/colors'
 
 const Header = ({ 
   title, 
@@ -35,7 +36,8 @@ const Header = ({
               style={styles.backButton}
               onPress={handleBackPress}
             >
-              <Text style={{ fontSize: 24, color: '#000' }}>←</Text>
+            <BackIcon width={24} height={24} color={COLORS.primary} />
+              {/* <Text style={{ fontSize: 24, color: '#000' }}>←</Text> */}
             </TouchableOpacity>
           )}
           <View style={styles.titleSection}>

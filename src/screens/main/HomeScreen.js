@@ -14,6 +14,7 @@ import {
   Dimensions,
   StatusBar,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Video from 'react-native-video';
 import { useIsFocused } from '@react-navigation/native';
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   },
   bottomContent: {
     position: 'absolute',
-    bottom: 120,
+    bottom: Platform.OS === 'ios' ? 120 : 90,
     left: 20,
     right: 80,
   },

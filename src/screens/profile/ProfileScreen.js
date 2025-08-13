@@ -15,6 +15,7 @@ import {
   StatusBar,
   ActivityIndicator,
   Image,
+  Platform,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
@@ -34,6 +35,7 @@ import { deleteUserToken, removeVerificationToken } from "../../utils/common";
 import { Get } from "../../services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import Style from "../../style/Style";
+import BackIcon from "../../assets/svg/back-arrow-white.svg";
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -135,12 +137,14 @@ const ProfileScreen = ({ navigation }) => {
     <View style={styles.container} pointerEvents={loading ? 'none' : 'auto'}>
       <LinearGradient colors={["#f4511e", "#ff7043"]} style={styles.header}>
         <SafeAreaView style={styles.safeArea}>
+        <Spacing val={Platform.OSr === 'ios' ? 0 : 36} />
           <View style={styles.headerContent}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.backIcon}>←</Text>
+            <BackIcon width={24} height={24} />
+              {/* <Text style={styles.backIcon}>←</Text> */}
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Profile</Text>
           </View>
