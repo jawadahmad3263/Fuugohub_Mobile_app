@@ -90,3 +90,38 @@ export const validatePhone = (text) => {
 export const validateCode = (text) => {
     return text?.length === 6
 }
+
+export const createFormData = (data) => {
+    const formData = new FormData()
+
+    Object.keys(data).forEach((key) => {
+        const value = data[key]
+        if (Array.isArray(value)) {
+            value.forEach((val) => {
+                if (typeof val === 'object' && val.uri) {
+                    formData.append(key, {
+                        uri: val.uri,
+                        type: val.type,
+                        name: val.fileName ?? val.name,
+                    })
+                } else {
+                    formData.append(key, val)
+                }
+            })
+        } else if (typeof value === 'object' && value.uri) {
+            formData.append(key, {
+                uri: value.uri,
+                type: value.type,
+                name: value.fileName ?? value.name,
+            })
+        } else {
+            formData.append(key, value)
+        }
+    })
+    // Debugging FormData
+    formData._parts.forEach((part) => {
+        console.log(part[0] + ', ' + part[1])
+    })
+
+    return formData
+}

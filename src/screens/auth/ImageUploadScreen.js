@@ -19,10 +19,12 @@ import Spacing from '../../components/common/Spacing';
 import COLORS from '../../style/colors';
 import Style from '../../style/Style';
 import { APP_SCREENS, MAIN_TAB_SCREENS } from '../../navigation/screens';
+import { Patch, PatchFormData } from '../../services/api';
+import { createFormData } from '../../utils/common';
 
 const ImageUploadScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const [loading, setLoading] = useState(false)
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -69,6 +71,7 @@ const ImageUploadScreen = ({ navigation }) => {
       } else if (result.assets && result.assets.length > 0) {
         const image = result.assets[0];
         setSelectedImage(image);
+       
         console.log('Selected image:', image);
       }
     } catch (error) {
@@ -84,10 +87,42 @@ const ImageUploadScreen = ({ navigation }) => {
 
   const handleComplete = () => {
     // TODO: Complete profile setup
+
     console.log('Complete pressed');
-    navigation.navigate('Main');
+    if(!selectedImage){
+      Alert.alert('Error', 'Please upload a photo')
+      return
+    }
+    const data = {
+      'profile-images':selectedImage
+    }
+    const formadata = createFormData(data)
+    // const formadata = new FormData()
+    // formadata.append('profile-images',selectedImage)
+
+    setLoading(true)
+    PatchFormData({
+      endpoint:'users/profile-image',
+      data:formadata
+    }).then((res)=>{
+      console.log('RES', res)
+      setLoading(false)
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Main" }],
+      });
+    }).catch((err)=>{
+      setLoading(false)
+        console.log('ERR', err)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Main" }],
+        });
+      // Alert.alert('Error', err?.response?.data?.message)
+    })
   };
 
+ 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView 
@@ -176,6 +211,7 @@ const ImageUploadScreen = ({ navigation }) => {
               style={[Style.nextButton, Style.border]}
               textStyle={[Style.textPrimary, Style.font18]}
               onPress={handleUploadLater}
+              
             />
           </View>
           <View style={[{ width: "48%" }]}>
@@ -184,6 +220,7 @@ const ImageUploadScreen = ({ navigation }) => {
               style={[Style.nextButton]}
               textStyle={[Style.nextButtonText]}
               onPress={handleComplete}
+              loading={loading}
             />
           </View>
         </View>

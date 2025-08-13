@@ -3,7 +3,7 @@
  * User profile management screen
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,106 +13,130 @@ import {
   TouchableOpacity,
   Alert,
   StatusBar,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+  ActivityIndicator,
+  Image,
+} from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
-import ProfileIcon from '../../assets/svg/profile-icon.svg';
-import AnalyticsIcon from '../../assets/svg/analytics.svg';
-import LogoutIcon from '../../assets/svg/logout.svg';
-import LiveStreamIcon from '../../assets/svg/live-strem-icon.svg';
-import EarningsIcon from '../../assets/svg/dollar.svg';
-import UserProfileAvatar from '../../assets/svg/user-profile-avatar.svg';
-import COLORS from '../../style/colors';
-import Spacing from '../../components/common/Spacing';
-import PrimaryButton from '../../components/common/PrimaryButton';
-import { APP_SCREENS } from '../../navigation/screens';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../../store/slices/userSlice';
-import { deleteUserToken, removeVerificationToken } from '../../utils/common';
+import ProfileIcon from "../../assets/svg/profile-icon-black.svg";
+import AnalyticsIcon from "../../assets/svg/analytics.svg";
+import LogoutIcon from "../../assets/svg/logout.svg";
+import LiveStreamIcon from "../../assets/svg/live-strem-icon.svg";
+import EarningsIcon from "../../assets/svg/dollar.svg";
+import UserProfileAvatar from "../../assets/svg/user-profile-avatar.svg";
+import COLORS from "../../style/colors";
+import Spacing from "../../components/common/Spacing";
+import PrimaryButton from "../../components/common/PrimaryButton";
+import { APP_SCREENS } from "../../navigation/screens";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../store/slices/userSlice";
+import { deleteUserToken, removeVerificationToken } from "../../utils/common";
+import { Get } from "../../services/api";
+import { useFocusEffect } from "@react-navigation/native";
+import Style from "../../style/Style";
 
 const ProfileScreen = ({ navigation }) => {
-  const [userProfile] = useState({
-    name: 'John David',
-    description: 'Lorem ipsum dummy text..',
-    isOnline: true,
-  });
-  const dispatch =useDispatch()
-
+  const [loading, setLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const dispatch = useDispatch();
+  // const user = useSelector((state) => state?.user?.user)
+  // console.warn('user', user)
+  // Alert.alert(JSON.stringify(userProfile))
   const menuItems = [
     {
-      id: 'profile',
-      title: 'Profile',
+      id: "profile",
+      title: "Profile",
       icon: ProfileIcon,
-      onPress: () => {navigation.navigate(APP_SCREENS.PERSONAL_PROFILE.name)}
+      onPress: () => {
+        navigation.navigate(APP_SCREENS.PERSONAL_PROFILE.name, userProfile);
+      },
     },
     {
-      id: 'liveStream',
-      title: 'Live Stream',
+      id: "liveStream",
+      title: "Live Stream",
       icon: LiveStreamIcon,
-      onPress: () => Alert.alert('Live Stream', 'Live stream functionality to be implemented'),
+      onPress: () =>
+        Alert.alert(
+          "Live Stream",
+          "Live stream functionality to be implemented"
+        ),
     },
     {
-      id: 'analytics',
-      title: 'Analytics',
+      id: "analytics",
+      title: "Analytics",
       icon: AnalyticsIcon,
-      onPress: () => {navigation.navigate(APP_SCREENS.ANALYTICS.name)}
+      onPress: () => {
+        navigation.navigate(APP_SCREENS.ANALYTICS.name);
+      },
     },
     {
-      id: 'earnings',
-      title: 'Earnings',
+      id: "earnings",
+      title: "Earnings",
       icon: EarningsIcon,
-      onPress: () => {navigation.navigate(APP_SCREENS.EARNINGS.name)}
+      onPress: () => {
+        navigation.navigate(APP_SCREENS.EARNINGS.name);
+      },
     },
     {
-      id: 'logout1',
-      title: 'Logout',
+      id: "logout1",
+      title: "Logout",
       icon: LogoutIcon,
       onPress: () => handleLogout(),
     },
-  
   ];
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => {
-            dispatch(setUser(null))
-            deleteUserToken()
-            removeVerificationToken()
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: () => {
+          dispatch(setUser(null));
+          deleteUserToken();
+          removeVerificationToken();
 
-            navigation.navigate('Auth')
-            console.log('User logged out');
-            Alert.alert('Success', 'Logout functionality to be implemented');
-          },
+          navigation.navigate("Auth");
+          console.log("User logged out");
+         
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleBuyCoins = () => {
-    Alert.alert('Buy Coins', 'Buy coins functionality to be implemented');
+    Alert.alert("Buy Coins", "Buy coins functionality to be implemented");
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      getUser();
+    }, [])
+  );
 
+  const getUser = async () => {
+    setLoading(true);
+    Get({
+      endpoint: "users/me",
+    })
+      .then((res) => {
+        console.warn("res", res);
+        setUserProfile(res?.data?.user);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn("err", err);
+        setLoading(false);
+      });
+  };
   return (
-    <View style={styles.container}>
-       
-
-      <LinearGradient
-        colors={['#f4511e', '#ff7043']}
-        style={styles.header}
-      >
+    <View style={styles.container} pointerEvents={loading ? 'none' : 'auto'}>
+      <LinearGradient colors={["#f4511e", "#ff7043"]} style={styles.header}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.headerContent}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
@@ -122,26 +146,54 @@ const ProfileScreen = ({ navigation }) => {
           </View>
 
           {/* User Profile Section */}
+        
           <View style={styles.userSection}>
             <View style={styles.avatarContainer}>
-              <UserProfileAvatar width={60} height={60} />
-              {userProfile.isOnline && (
+              {/* <UserProfileAvatar width={60} height={60} /> */}
+              {userProfile?.profileImage ? (
+                <Image
+                  source={{ uri: userProfile?.profileImage }}
+                  style={{ width: 60, height: 60, borderRadius: 100 }}
+                  resizeMode="cover"
+                />
+              ) : (
+                <UserProfileAvatar width={60} height={60} />
+              )}
+              {userProfile?.firstName && (
                 <View style={styles.onlineIndicator} />
               )}
             </View>
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>{userProfile.name}</Text>
-              <Text style={styles.userDescription}>{userProfile.description}</Text>
+              {loading ? (
+                <ActivityIndicator
+                  style={{
+                    alignSelf: "flex-start",
+                  }}
+                  size="small"
+                  color={COLORS.black}
+                />
+              ) : (
+                <>
+                  <Text style={styles.userName}>
+                    {userProfile?.firstName} {userProfile?.lastName}
+                  </Text>
+                  <Text style={styles.userDescription}>
+                    {userProfile?.email}
+                  </Text>
+                </>
+              )}
             </View>
           </View>
+          
         </SafeAreaView>
       </LinearGradient>
 
       {/* Scrollable Content */}
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        pointerEvents={loading ? 'none' : 'auto'}
       >
         {/* Menu Items */}
         <View style={styles.menuContainer}>
@@ -149,7 +201,10 @@ const ProfileScreen = ({ navigation }) => {
             <TouchableOpacity
               key={item.id}
               style={styles.menuItem}
-              onPress={item.onPress}
+              onPress={() => {
+                if(loading) return
+                item.onPress()
+              }}
               activeOpacity={0.7}
             >
               <View style={styles.menuItemLeft}>
@@ -163,10 +218,10 @@ const ProfileScreen = ({ navigation }) => {
 
         {/* Buy Coins Button */}
         <PrimaryButton
-        title='Buy Coins'
-        textStyle={styles.buyCoinsText}
-        onPress={handleBuyCoins}
-        style={styles.buyCoinsButton}
+          title="Buy Coins"
+          textStyle={styles.buyCoinsText}
+          onPress={handleBuyCoins}
+          style={styles.buyCoinsButton}
         />
 
         {/* Footer Links */}
@@ -190,7 +245,7 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
     paddingTop: 0,
@@ -200,62 +255,62 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 30,
   },
   backButton: {
     width: 44,
     height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   backIcon: {
     fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginLeft: 10,
   },
   userSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
     marginRight: 20,
   },
   onlineIndicator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 4,
     right: 4,
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   userInfo: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   userName: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 6,
   },
   userDescription: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: "rgba(255, 255, 255, 0.9)",
   },
   scrollView: {
     flex: 1,
@@ -268,15 +323,15 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f8f9fa',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#f8f9fa",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -286,27 +341,27 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   menuItemText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
+    color: "#333",
     marginLeft: 16,
   },
   menuItemArrow: {
     fontSize: 18,
-    color: '#666',
-    fontWeight: 'bold',
+    color: "#666",
+    fontWeight: "bold",
   },
   buyCoinsButton: {
-     alignSelf:'center',
+    alignSelf: "center",
     marginTop: 24,
     borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -314,17 +369,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,
-    width:'90%'
+    width: "90%",
   },
   buyCoinsGradient: {
     paddingVertical: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buyCoinsText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   footer: {
     paddingHorizontal: 20,
@@ -336,13 +391,13 @@ const styles = StyleSheet.create({
   },
   footerLinkText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   copyright: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginTop: 12,
   },
 });
 
-export default ProfileScreen; 
+export default ProfileScreen;

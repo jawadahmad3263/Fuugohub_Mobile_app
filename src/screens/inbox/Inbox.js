@@ -4,8 +4,10 @@ import Style from '../../style/Style'
 import Header from '../../components/common/Header'
 import { ChatHeader, ChatMessages, ChatInput, mockContact, mockCurrentUser, mockMessages } from './components'
 import COLORS from '../../style/colors'
+import { useNavigation } from '@react-navigation/native'
 
 const Inbox = () => {
+  const navigation = useNavigation()
   const [messages, setMessages] = useState(mockMessages);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -49,7 +51,8 @@ const Inbox = () => {
   };
 
   const handleBackPress = () => {
-    Alert.alert('Back', 'Navigate back to previous screen');
+ 
+    navigation.goBack()
   };
 
   const handleNotificationPress = () => {

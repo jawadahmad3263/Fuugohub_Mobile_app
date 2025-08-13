@@ -19,12 +19,13 @@ const authScreens = [
   AUTH_SCREENS.OTP_VERIFICATION,
   AUTH_SCREENS.RESET_PASSWORD,
   AUTH_SCREENS.RESET_PASSWORD_OTP,
+  AUTH_SCREENS.SPLASH,
 ];
 
 const AuthStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={AUTH_SCREENS.LOGIN.name}
+      initialRouteName={AUTH_SCREENS.SPLASH.name}
       screenOptions={{
         headerShown: false,
         headerStyle: {

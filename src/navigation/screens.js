@@ -26,9 +26,15 @@ import ProductDetailsScreen from '../screens/businessPage/ProductDetailsScreen';
 import OtpVerification from '../screens/auth/OtpVerification';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 import ResetPasswordOtpScreen from '../screens/auth/ResetPasswordOtpScreen';
+import Splash from '../screens/splash/Splash';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
+  SPLASH: {
+    name: 'Splash',
+    component: Splash,
+    title: 'Splash',
+  },
   LOGIN: {
     name: 'Login',
     component: LoginScreen,

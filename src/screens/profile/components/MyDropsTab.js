@@ -10,6 +10,7 @@ import COLORS from '../../../style/colors';
 import CreateNewBusinessModal from '../../businessPage/components/CreateNewBusinessModal';
 import { APP_SCREENS } from '../../../navigation/screens';
 import { useNavigation } from '@react-navigation/native';
+import Style from '../../../style/Style';
 const MyDropsTab = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useNavigation();
@@ -132,10 +133,21 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    marginBottom: 1,
-    flex:1
+  
+    padding:24,
+     
+    flex:1,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 4,
+    margin:16,
+    borderRadius:16,
+    height:100
+     
+   
+
   },
   statItem: {
     flex: 1,
@@ -143,13 +155,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 10,
     padding: 10,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: COLORS.border,
    
   },
   statNumber: {
@@ -171,7 +176,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 20,
-    marginBottom: 20,
+    
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 4,
+    borderRadius:16,
+    margin:16,
+  
   },
   aboutTitle: {
     fontSize: 18,
@@ -187,6 +200,7 @@ const styles = StyleSheet.create({
   },
   contactInfo: {
     gap: 12,
+
   },
   contactItem: {
     flexDirection: 'row',

@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
+import EditIcon from '../../../assets/svg/edit-icon.svg'
+import DeleteIcon from '../../../assets/svg/delete-icon.svg'
 
 const DetailsTab = () => {
   const products = [
@@ -20,8 +22,8 @@ const DetailsTab = () => {
           <View style={styles.cardHeader}>
             <Text style={styles.productName}>{product.name}</Text>
             <View style={styles.actionIcons}>
-              <Text style={styles.editIcon}>✏️</Text>
-              <Text style={styles.deleteIcon}>🗑️</Text>
+            <EditIcon width={20} height={20} />
+            <DeleteIcon width={20} height={20} />
             </View>
           </View>
           

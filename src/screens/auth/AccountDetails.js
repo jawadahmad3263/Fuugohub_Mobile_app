@@ -24,10 +24,22 @@ import { Post } from '../../services/api';
 import { setUserToken } from '../../utils/common';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/userSlice';
+
+
 const AccountDetails = () => {
     const navigation = useNavigation()
     const route = useRoute()
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+    gender: '',
+    age: '',
+  });
+
+  const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
     phoneNumber: '',
@@ -42,45 +54,85 @@ const AccountDetails = () => {
   const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch()
+  
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateField = (field, value) => {
+    switch (field) {
+      case 'firstName':
+        if (!value.trim()) return 'Please enter your first name';
+        if (value.trim().length < 2) return 'First name must be at least 2 characters';
+        if (!/^[a-zA-Z\s]+$/.test(value.trim())) return 'First name can only contain letters';
+        return '';
+      
+      case 'lastName':
+        if (!value.trim()) return 'Please enter your last name';
+        if (value.trim().length < 2) return 'Last name must be at least 2 characters';
+        if (!/^[a-zA-Z\s]+$/.test(value.trim())) return 'Last name can only contain letters';
+        return '';
+      
+      case 'phoneNumber':
+        if (!value) return 'Please enter your phone number';
+        if (value.replace(/[^0-9]/g, '').length < 9) return 'Please enter a valid phone number';
+        return '';
+      
+      case 'password':
+        if (!value) return 'Please enter a password';
+        if (value.length < 6) return 'Password must be at least 6 characters';
+        if (!/(?=.*[a-z])/.test(value)) return 'Password must contain at least one lowercase letter';
+        if (!/(?=.*[A-Z])/.test(value)) return 'Password must contain at least one uppercase letter';
+        if (!/(?=.*\d)/.test(value)) return 'Password must contain at least one number';
+        return '';
+      
+      case 'confirmPassword':
+        if (!value) return 'Please confirm your password';
+        if (value !== formData.password) return 'Passwords do not match';
+        return '';
+      
+      case 'gender':
+        if (!value) return 'Please select your gender';
+        return '';
+      
+      case 'age':
+        if (!value) return 'Please select your age group';
+        return '';
+      
+      default:
+        return '';
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    Object.keys(formData).forEach(field => {
+      const error = validateField(field, formData[field]);
+      newErrors[field] = error;
+      if (error) isValid = false;
+    });
+
+    setErrors(newErrors);
+    return isValid;
   };
  
   const handleNext = () => {
-    // Validate required fields
-    if (!formData.firstName) {
-      Alert.alert('Error', 'Please enter your first name');
+    if (!validateForm()) {
       return;
     }
-    if (!formData.lastName) {
-      Alert.alert('Error', 'Please enter your last name');
-      return;
-    }
-    if (!formData.phoneNumber) {
-      Alert.alert('Error', 'Please enter your phone number');
-      return;
-    }
-    if (!formData.password) {
-      Alert.alert('Error', 'Please enter a password');
-      return;
-    }
-    if(formData.password !== formData.confirmPassword){
-      Alert.alert('Error', 'Password and confirm password do not match');
-      return;
-    }
-    if (!formData.gender) {
-      Alert.alert('Error', 'Please select your gender');
-      return;
-    }
-    if (!formData.age) {
-      Alert.alert('Error', 'Please select your age group');
-      return;
-    }
+
     const email = route?.params?.email || route?.params?.data?.email || '';
     if (!email) {
       Alert.alert('Error', 'Email is required');
       return;
     }
+
     setLoading(true)
     const data = {
       firstName: formData.firstName,
@@ -159,24 +211,26 @@ const AccountDetails = () => {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>First name</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.firstName && styles.inputError]}
               value={formData.firstName}
               onChangeText={(value) => handleInputChange('firstName', value)}
               placeholder="John"
               placeholderTextColor="#97a3b4"
             />
+            {errors.firstName ? <Text style={styles.errorText}>{errors.firstName}</Text> : null}
           </View>
 
           {/* Last Name */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Lasth name</Text>
+            <Text style={styles.label}>Last name</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.lastName && styles.inputError]}
               value={formData.lastName}
               onChangeText={(value) => handleInputChange('lastName', value)}
               placeholder="David"
               placeholderTextColor="#97a3b4"
             />
+            {errors.lastName ? <Text style={styles.errorText}>{errors.lastName}</Text> : null}
           </View>
 
           {/* Phone Number */}
@@ -185,6 +239,7 @@ const AccountDetails = () => {
             value={formData.phoneNumber}
             onChangeText={(value) => handleInputChange('phoneNumber', value)}
             />
+            {errors.phoneNumber ? <Text style={styles.errorText}>{errors.phoneNumber}</Text> : null}
           </View>
 
           {/* Password */}
@@ -192,7 +247,7 @@ const AccountDetails = () => {
             <Text style={styles.label}>Password</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                style={[styles.input, styles.passwordInput]}
+                style={[styles.input, styles.passwordInput, errors.password && styles.inputError]}
                 value={formData.password}
                 onChangeText={(value) => handleInputChange('password', value)}
                 placeholder="6+ characters"
@@ -203,9 +258,10 @@ const AccountDetails = () => {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text style={styles.eyeIcon}>👁️</Text>
+                <EyeIcon width={24} height={24} />
               </TouchableOpacity>
             </View>
+            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
           </View>
 
           {/* Confirm Password */}
@@ -213,7 +269,7 @@ const AccountDetails = () => {
             <Text style={styles.label}>Confirm Password</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                style={[styles.input, styles.passwordInput]}
+                style={[styles.input, styles.passwordInput, errors.confirmPassword && styles.inputError]}
                 value={formData.confirmPassword}
                 onChangeText={(value) => handleInputChange('confirmPassword', value)}
                 placeholder="6+ characters"
@@ -224,9 +280,10 @@ const AccountDetails = () => {
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text style={styles.eyeIcon}>👁️</Text>
+                <EyeIcon width={24} height={24} />
               </TouchableOpacity>
             </View>
+            {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
           </View>
 
           {/* Gender */}
@@ -244,6 +301,7 @@ const AccountDetails = () => {
                 label="Female"
               />
             </View>
+            {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
           </View>
 
           {/* Age */}
@@ -266,6 +324,7 @@ const AccountDetails = () => {
                 label="18"
               />
             </View>
+            {errors.age ? <Text style={styles.errorText}>{errors.age}</Text> : null}
           </View>
 
           {/* Next Button */}
@@ -430,6 +489,16 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     fontSize: 16,
     color: '#000',
+  },
+  inputError: {
+    borderColor: '#ef4444',
+    backgroundColor: '#fef2f2',
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
   },
   phoneContainer: {
     flexDirection: 'row',

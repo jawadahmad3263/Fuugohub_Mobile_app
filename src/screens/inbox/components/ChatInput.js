@@ -7,6 +7,11 @@ import {
   Text,
 } from "react-native";
 import COLORS from "../../../style/colors";
+import EmojiIcon from '../../../assets/svg/emoji.svg'
+import PaperclipIcon from '../../../assets/svg/file-icon.svg'
+import MicrophoneIcon from '../../../assets/svg/voic-record-icon.svg'
+import PickImageIcon from '../../../assets/svg/pick-image.svg'
+ 
 
 const ChatInput = ({
   onSendMessage,
@@ -29,9 +34,7 @@ const ChatInput = ({
       <View style={styles.inputContainer}>
         {/* Left side - Emoji/Sticker Icon */}
         <TouchableOpacity style={styles.emojiButton} onPress={onEmojiPress}>
-          <View style={styles.emojiIcon}>
-            <View style={styles.emojiLine} />
-          </View>
+        <EmojiIcon width={24} height={24} />
         </TouchableOpacity>
 
         {/* Center - Text Input Field */}
@@ -55,26 +58,29 @@ const ChatInput = ({
             style={styles.actionButton}
             onPress={onAttachmentPress}
           >
-            <View style={styles.imageIconContainer}>
+          <PickImageIcon width={24} height={24} />
+            {/* <View style={styles.imageIconContainer}>
               <View style={styles.imageIcon}>
                 <View style={styles.imageFrame} />
                 <View style={styles.plusSign}><Text>+</Text></View>
               </View>
-            </View>
+            </View> */}
           </TouchableOpacity>
 
           {/* Paperclip Icon */}
           <TouchableOpacity style={styles.actionButton} onPress={onFilePress}>
-            <View style={styles.paperclipIcon}>
+            <PaperclipIcon width={24} height={24} />
+            {/* <View style={styles.paperclipIcon}>
               <View style={styles.paperclipShape} />
-            </View>
+            </View> */}
           </TouchableOpacity>
 
           {/* Microphone Icon */}
           <TouchableOpacity style={styles.actionButton} onPress={onVoicePress}>
-            <View style={styles.microphoneIcon}>
+            <MicrophoneIcon width={24} height={24} />
+            {/* <View style={styles.microphoneIcon}>
               <View style={styles.microphoneShape} />
-            </View>
+            </View> */}
           </TouchableOpacity>
         </View>
       </View>

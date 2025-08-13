@@ -43,7 +43,8 @@ const LoginScreen = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      userToken()
+      // userToken()
+      // navigation.navigate('ImageUploadScreen')
     
     }, [])
   );

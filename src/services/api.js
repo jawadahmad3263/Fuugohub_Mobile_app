@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getUserToken } from '../utils/common'
+import { Alert } from 'react-native'
 
  
 // import { BASE_URL } from '../utils/constant'
@@ -31,7 +32,8 @@ export const Post = async ({ endpoint, data }) => {
 }
 export const Patch = async ({ endpoint, data }) => {
     const token = await getUserToken()
-
+    console.warn('token', token)
+   
     return new Promise((resolve, reject) => {
         axios
             .patch(endpoint, data, {

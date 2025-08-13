@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar, Image } from 'react-native'
 import React, { useState } from 'react'
 import UserProfileAvatar from '../../assets/svg/user-profile-avatar.svg'
 import Style from '../../style/Style'
@@ -8,14 +8,26 @@ import MyDropsTab from './components/MyDropsTab'
 import FollowersTab from './components/FollowersTab'
 import FollowingsTab from './components/FollowingsTab'
 import LikedTab from './components/LikedTab'
+import { useFocusEffect, useRoute } from '@react-navigation/native'
 
 const PersonalProfile = ({ navigation }) => {
+  const route = useRoute()
   const [activeTab, setActiveTab] = useState('My Drops')
-
+  const [userProfile,setUserProfile] = useState(null)
   const tabs = ['My Drops', 'Followers', 'Followings', 'Liked']
-
+  useFocusEffect(
+    React.useCallback(() => {
+      handleRouteValue()
+    }, [route?.params])
+  );
   const handleTabPress = (tab) => {
     setActiveTab(tab)
+  }
+
+  const handleRouteValue = () => {
+    const user = route?.params
+    console.warn('user', user)
+    setUserProfile(user)
   }
 
   return (
@@ -34,12 +46,18 @@ const PersonalProfile = ({ navigation }) => {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* User Profile Section */}
         <Spacing val={10}/>
+        <View>
         <View style={styles.userProfileSection}>
           <View style={styles.avatarContainer}>
-            <UserProfileAvatar width={120} height={120} />
+            {/* <UserProfileAvatar width={120} height={120} /> */}
+            {userProfile?.profileImage ? <Image source={{uri:userProfile?.profileImage}} style={{width:120,height:120,borderRadius:100}} resizeMode='cover' /> : <UserProfileAvatar width={120} height={120} />}
+
           </View>
-          <Text style={styles.userName}>Mireya Conner</Text>
-          <Text style={styles.userTitle}>Product Owner</Text>
+          {/* <Text style={styles.userName}>Mireya Conner</Text>
+          <Text style={styles.userTitle}>Product Owner</Text> */}
+          <Text style={styles.userName}>{userProfile?.firstName} {userProfile?.lastName || ''}</Text>
+          <Text style={styles.userTitle}>Product Owne</Text>
+        </View>
         </View>
 
         {/* Navigation Tabs */}
@@ -85,7 +103,11 @@ const styles = StyleSheet.create({
     marginHorizontal:10,
     borderTopLeftRadius:12,
     borderTopRightRadius:12,
-    overflow:'hidden'
+    overflow:'hidden',
+    ...Style.cardShadow,
+    // margin:16,
+    // borderRadius:16,
+  
   },
   avatarContainer: {
     marginBottom: 20,
@@ -105,7 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    // paddingVertical: 16,
     marginBottom: 1,
   },
   tab: {
