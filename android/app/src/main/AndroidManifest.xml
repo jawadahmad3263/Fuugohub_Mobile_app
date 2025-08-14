@@ -1,6 +1,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- Gallery and Storage Permissions for Image Picker -->
+    <!-- For Android 13+ (API level 33+): READ_MEDIA_IMAGES for accessing photos -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    
+    <!-- For Android 12 and below (API level 32-): READ_EXTERNAL_STORAGE for accessing photos -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+    
+    <!-- For Android 9 and below (API level 28-): WRITE_EXTERNAL_STORAGE for older devices -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="28" />
+    
+    <!-- Camera permission (optional, for future camera functionality) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- Feature declarations -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
       android:name=".MainApplication"

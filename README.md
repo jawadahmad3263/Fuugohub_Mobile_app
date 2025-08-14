@@ -97,6 +97,26 @@ npx react-native run-ios
 npx react-native run-android
 ```
 
+## 🔐 Android Permissions
+
+### Image Picker Permissions
+The app requires specific permissions for accessing the photo gallery on Android devices. These permissions are automatically declared in the manifest file:
+
+- **Android 13+ (API 33+)**: `READ_MEDIA_IMAGES` - For accessing photos and videos
+- **Android 12 and below (API 32-)**: `READ_EXTERNAL_STORAGE` - For accessing device storage
+- **Android 9 and below (API 28-)**: `WRITE_EXTERNAL_STORAGE` - For older device compatibility
+- **Camera**: `CAMERA` - For future camera functionality
+
+### Permission Handling
+The app uses a simple permission handling approach:
+- Permissions are requested when the user tries to access the gallery
+- Clear permission dialogs with user-friendly messages
+- Graceful fallbacks for different Android API levels
+- No complex UI elements - just simple alerts when needed
+
+### Manifest Configuration
+The `android/app/src/main/AndroidManifest.xml` file contains all necessary permission declarations with proper `maxSdkVersion` attributes for backward compatibility.
+
 ## 📱 Features
 
 ### Authentication

@@ -138,6 +138,7 @@ const OtpVerification = ({ navigation }) => {
             keyboardShouldPersistTaps="handled"
           >
             {/* Logo and Brand */}
+            <Spacing type="v" val={Platform.OS === "ios" ? 10 : 50} />
             <Image
               source={require("../../assets/images/login-logo.png")}
               style={styles.logo}

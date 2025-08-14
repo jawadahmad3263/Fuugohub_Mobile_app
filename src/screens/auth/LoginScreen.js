@@ -63,27 +63,35 @@ const LoginScreen = ({ navigation }) => {
   }
 
   const handleLogin = () => {
-    if(!email){
-      setErros({...erros, email: 'Please enter your email'})
-      return
-    }
-    if(!password){
-      setErros({...erros, password: 'Please enter your password'})
-      return
-    }
-    if(erros.email || erros.password){
-      Alert.alert('Error', 'Please enter your email and password')
-      return
-    }
-    const data = {
-      email: email,
-      password: password,
-    }
-    setLoading(true)
+    // Clear any existing errors first
     setErros({
       email: '',
       password: '',
-    })
+    });
+
+    // Check for empty fields and set specific errors
+    let hasErrors = false;
+    if(!email.trim()){
+      setErros(prev => ({...prev, email: 'Please enter your email'}));
+      hasErrors = true;
+    }
+    if(!password.trim()){
+      setErros(prev => ({...prev, password: 'Please enter your password'}));
+      hasErrors = true;
+    }
+
+    // If there are any field errors, don't proceed
+    if(hasErrors){
+      return;
+    }
+
+    const data = {
+      email: email.trim(),
+      password: password,
+    }
+    
+    setLoading(true);
+    
     Post({endpoint: '/auth/login', data: data})
     .then(async(res) => {
       console.log('RES', JSON.stringify(res))
@@ -114,6 +122,8 @@ const LoginScreen = ({ navigation }) => {
             keyboardShouldPersistTaps="handled"
           >
             {/* Logo and Title */}
+            <Spacing type="v" val={Platform.OS === "ios" ? 10 : 50} />
+
             <Image
               source={require("../../assets/images/login-logo.png")}
               style={styles.logo}
@@ -143,7 +153,12 @@ const LoginScreen = ({ navigation }) => {
               <CustomTextInput
                 label="Email address"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (erros.email) {
+                    setErros({...erros, email: ''});
+                  }
+                }}
                 placeholder="Email address"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -152,7 +167,12 @@ const LoginScreen = ({ navigation }) => {
               <CustomTextInput
                 label="Password"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (erros.password) {
+                    setErros({...erros, password: ''});
+                  }
+                }}
                 placeholder="6+ characters"
                 secureTextEntry
                 error={erros.password}

@@ -100,6 +100,8 @@ const ResetPasswordScreen = ({ }) => {
             keyboardShouldPersistTaps="handled"
           >
             {/* Logo and Title */}
+            <Spacing type="v" val={Platform.OS === "ios" ? 10 : 50} />
+
             <Image
               source={require("../../assets/images/login-logo.png")}
               style={styles.logo}

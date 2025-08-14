@@ -24,34 +24,74 @@ import { createFormData } from '../../utils/common';
 
 const ImageUploadScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [loading, setLoading] = useState(false)
-  const requestCameraPermission = async () => {
+  const [loading, setLoading] = useState(false);
+
+  const requestGalleryPermission = async () => {
     if (Platform.OS === 'android') {
       try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
+        // For Android 13+ (API level 33+), we need READ_MEDIA_IMAGES
+        // For older versions, we need READ_EXTERNAL_STORAGE
+        if (Platform.Version >= 33) {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: 'Gallery Permission',
+              message: 'App needs access to your photo gallery to select profile pictures',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } else {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            {
+              title: 'Storage Permission',
+              message: 'App needs access to your device storage to select profile pictures',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        }
       } catch (err) {
-        console.warn(err);
+        console.warn('Permission request error:', err);
         return false;
       }
     } else {
+      // iOS doesn't require explicit permission for photo library access
+      // The system will show permission dialog when needed
       return true;
     }
   };
 
   const handleUploadPhoto = async () => {
-    const hasPermission = await requestCameraPermission();
+    const hasPermission = await requestGalleryPermission();
     if (!hasPermission) {
-      Alert.alert('Permission Denied', 'You need to grant permission to access the gallery');
+      Alert.alert(
+        'Permission Required',
+        'Gallery access is required to select photos. Please grant permission to continue.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Grant Permission', onPress: async () => {
+            const granted = await requestGalleryPermission();
+            if (granted) {
+              // Permission granted, now open gallery
+              openGallery();
+            }
+          }}
+        ]
+      );
       return;
     }
 
+    // Permission already granted, open gallery
+    openGallery();
+  };
+
+  const openGallery = async () => {
     const options = {
       mediaType: 'photo',
       quality: 0.8,
@@ -82,13 +122,17 @@ const ImageUploadScreen = ({ navigation }) => {
 
   const handleUploadLater = () => {
     // TODO: Navigate to next screen or skip photo upload
-    console.log('Upload later pressed');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Main" }],
+    });
   };
 
   const handleComplete = () => {
     // TODO: Complete profile setup
 
     console.log('Complete pressed');
+    
     if(!selectedImage){
       Alert.alert('Error', 'Please upload a photo')
       return
@@ -130,6 +174,8 @@ const ImageUploadScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         {/* Header with Logo */}
+        <Spacing type="v" val={Platform.OS === "ios" ? 10 : 50} />
+
         <View style={styles.header}>
           <Image
             source={require('../../assets/images/login-logo.png')}
@@ -163,7 +209,7 @@ const ImageUploadScreen = ({ navigation }) => {
           </Text>
         </View>
 
-        {/* <Spacing type="v" val={10} /> */}
+        <Spacing type="v" val={20} />
 
         {/* Photo Upload Section */}
         <View style={styles.uploadSection}>

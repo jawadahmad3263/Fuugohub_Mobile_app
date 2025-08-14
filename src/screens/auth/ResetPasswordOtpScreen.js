@@ -34,6 +34,7 @@ const OtpVerification = ({ navigation }) => {
   const [verifyToken, setVerifyToken] = useState(
     route?.params?.verificationToken || ""
   );
+  
   const [loading, setLoading] = useState(false)
   
   const [email, setEmail] = useState(route?.params?.email || "");
@@ -114,11 +115,12 @@ const OtpVerification = ({ navigation }) => {
     Post({ endpoint: "auth/resend-otp", data: data })
       .then((res) => {
         console.log("RES", JSON.stringify(res));
+        Alert.alert('Success', res?.message)
         setVerifyToken(res?.data?.verificationToken);
-        setVerificationToken(res?.data?.verificationToken);
+        // setVerificationToken(res?.data?.verificationToken);
       })
       .catch((err) => {
-        Alert.alert("Error", err?.message);
+        Alert.alert("Error", err?.response?.data?.message);
         console.log(err);
       });
   };
@@ -141,6 +143,8 @@ const OtpVerification = ({ navigation }) => {
             keyboardShouldPersistTaps="handled"
           >
             {/* Logo and Brand */}
+            <Spacing type="v" val={Platform.OS === "ios" ? 10 : 50} />
+
             <Image
               source={require("../../assets/images/login-logo.png")}
               style={styles.logo}
