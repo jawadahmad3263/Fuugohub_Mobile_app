@@ -93,7 +93,7 @@ if(!validateEmail(email)){
             </Text>
             <Spacing type="v" val={10} />
             <Text style={[Style.font12, Style.textSecondary, Style.textCenter]}>
-              Inter your valid email address and complete some easy steps for
+              Enter your valid email address and complete some easy steps for
               register your account
             </Text>
             <Spacing type="v" val={30} />
@@ -124,14 +124,21 @@ if(!validateEmail(email)){
               /> */}
               <Spacing type="v" val={10} />
               <PrimaryButton
-                title="Start"
+                title="Continue"
                 onPress={handleStart}
                 style={styles.signInButton}
                 textStyle={styles.signInButtonText}
                 loading={loading}
               />
             </View>
-
+            <Spacing type="v" val={10} />
+          
+            <Text style={[Style.font12, Style.textSecondary]}>
+            <Text style={[Style.font12, Style.textSecondary, Style.bold]}>
+              Disclaimer:
+            </Text> By continuing you agree to Fuugohub's terms of service and confirm you have read Fuugohub's Privacy policy.
+            </Text>
+            <Spacing type="v" val={10} />
             {/* Divider and Social */}
             <View style={styles.dividerRow}>
               <View style={styles.divider} />
@@ -169,6 +176,7 @@ if(!validateEmail(email)){
                 </Text>
               </Text>
             </View>
+            <Spacing type="v" val={ Platform.OS === "android" ? 100 : 20} />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

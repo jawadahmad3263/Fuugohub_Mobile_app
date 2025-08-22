@@ -209,7 +209,7 @@ const ImageUploadScreen = ({ navigation }) => {
           </Text>
         </View>
 
-        <Spacing type="v" val={20} />
+        {/* <Spacing type="v" val={20} /> */}
 
         {/* Photo Upload Section */}
         <View style={styles.uploadSection}>
@@ -270,6 +270,7 @@ const ImageUploadScreen = ({ navigation }) => {
             />
           </View>
         </View>
+        <Spacing val={Platform.OS=='android' ? 50:10}/>
       </ScrollView>
     </SafeAreaView>
   );
@@ -320,8 +321,9 @@ const styles = StyleSheet.create({
   },
   uploadSection: {
     alignItems: 'center',
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
+    marginTop:30
   },
   uploadCircle: {
     width: 200,
@@ -383,7 +385,7 @@ const styles = StyleSheet.create({
   },
   bottomButtons: {
     position: "absolute",
-    bottom: 0,
+    bottom: 5,
     left: 0,
     right: 0,
     flexDirection: "row",

@@ -14,6 +14,7 @@ import PrimaryButton from "../../components/common/PrimaryButton";
 import Style from "../../style/Style";
 import SecondaryButton from "../../components/common/SecondaryButton";
 import { AUTH_SCREENS } from "../../navigation/screens";
+import Spacing from "../../components/common/Spacing";
 
 const UserPreferences = ({navigation}) => {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
@@ -93,9 +94,7 @@ const UserPreferences = ({navigation}) => {
             ))}
           </View>
         </View>
-      </ScrollView>
-
-      {/* Bottom Buttons */}
+            {/* Bottom Buttons */}
       <View style={styles.bottomButtons}>
         <View style={[{ width: "48%" }]}>
           <PrimaryButton
@@ -115,6 +114,10 @@ const UserPreferences = ({navigation}) => {
           ></PrimaryButton>
         </View>
       </View>
+      <Spacing val={Platform.OS=='android' ? 50:10}/>
+      </ScrollView>
+
+  
     </View>
   );
 };
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
   },
   bottomButtons: {
     position: "absolute",
-    bottom: 0,
+    bottom:10,
     left: 0,
     right: 0,
     flexDirection: "row",

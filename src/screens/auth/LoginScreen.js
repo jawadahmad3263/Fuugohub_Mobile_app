@@ -106,6 +106,8 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false)
       Alert.alert('Error', err?.response?.data?.message)
       console.log('ERR', JSON.stringify(err))
+    }).finally(() => {
+      setLoading(false)
     })
   }
 
@@ -173,7 +175,7 @@ const LoginScreen = ({ navigation }) => {
                     setErros({...erros, password: ''});
                   }
                 }}
-                placeholder="6+ characters"
+                placeholder="8+ characters"
                 secureTextEntry
                 error={erros.password}
               />
@@ -229,6 +231,7 @@ const LoginScreen = ({ navigation }) => {
                 </Text>
               </Text>
             </View>
+            <Spacing type="v" val={ Platform.OS === "android" ? 100 : 20} />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -330,6 +333,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginTop: 18,
     flex: 1,
+    // marginBottom:10
     // backgroundColor: 'red',
   },
   footerText: {

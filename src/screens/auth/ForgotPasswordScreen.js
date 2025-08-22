@@ -134,6 +134,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                 </Text>
               </Text>
             </View>
+            <Spacing type="v" val={ Platform.OS === "android" ? 50 : 20} />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

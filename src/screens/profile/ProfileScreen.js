@@ -124,7 +124,7 @@ const ProfileScreen = ({ navigation }) => {
       endpoint: "users/me",
     })
       .then((res) => {
-        console.warn("res", res);
+        console.warn("res==>", JSON.stringify(res?.data?.user));
         setUserProfile(res?.data?.user);
         setLoading(false);
       })
@@ -157,8 +157,9 @@ const ProfileScreen = ({ navigation }) => {
               {userProfile?.profileImage ? (
                 <Image
                   source={{ uri: userProfile?.profileImage }}
-                  style={{ width: 60, height: 60, borderRadius: 100 }}
+                  style={{ width: 60, height: 60, borderRadius: 100,backgroundColor:COLORS.primary }}
                   resizeMode="cover"
+                  cachePolicy="none"
                 />
               ) : (
                 <UserProfileAvatar width={60} height={60} />

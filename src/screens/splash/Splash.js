@@ -17,7 +17,7 @@ const Splash = ({ navigation }) => {
         userToken();
       }, 1000);
 
-      // navigation.navigate('ImageUploadScreen')
+      // navigation.navigate('UserPreferences')
     }, [])
   );
 

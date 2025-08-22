@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   Keyboard,
   TextInput,
   Alert,
+  Pressable,
 } from "react-native";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import Spacing from "../../components/common/Spacing";
@@ -36,18 +37,53 @@ const OtpVerification = ({ navigation }) => {
   const [loading, setLoading] = useState(false)
   
   const [email, setEmail] = useState(route?.params?.email || "");
+  const [resendTimer, setResendTimer] = useState(60); // 60 seconds timer
+  const [canResend, setCanResend] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       handleRouteParams();
+      // Start timer when screen comes into focus
+      startResendTimer();
     }, [route?.params])
   );
 
   const handleRouteParams = () => {
     setEmail(route?.params?.email || "");
     setVerifyToken(route?.params?.verificationToken || "");
-  
   };
+
+  const startResendTimer = () => {
+    setResendTimer(60);
+    setCanResend(false);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Timer effect
+  useEffect(() => {
+    let interval = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            setCanResend(true);
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [resendTimer]);
   const handleOtpChange = (text, index) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -101,22 +137,34 @@ const OtpVerification = ({ navigation }) => {
 
   const handleResendCode = () => {
     // Handle resend code logic here
-    if(!verifyToken){
-        return
+    if (!canResend) {
+      Alert.alert("Error", "Please wait for the timer to finish before resending");
+      return;
     }
+    
+    if(!verifyToken){
+      Alert.alert("Error", "Please wait for the code to be sent")
+      return
+    }
+    
     const data = {
       verificationToken: verifyToken,
     };
-
+    setLoading(true)
     Post({ endpoint: "auth/resend-otp", data: data })
       .then((res) => {
         console.log("RES", JSON.stringify(res));
         setVerifyToken(res?.data?.verificationToken);
         setVerificationToken(res?.data?.verificationToken);
+        // Restart timer after successful resend
+        startResendTimer();
+        setLoading(false)
       })
       .catch((err) => {
+        setLoading(false)
         Alert.alert("Error", err?.message);
         console.log(err);
+      
       });
   };
 
@@ -210,14 +258,24 @@ const OtpVerification = ({ navigation }) => {
             <Spacing type="v" val={24} />
 
             {/* Resend Code Link */}
-            <View style={styles.linkContainer}>
+            <TouchableOpacity 
+              onPress={handleResendCode} 
+              style={[styles.linkContainer, !canResend && styles.linkContainerDisabled]}
+              disabled={!canResend}
+            >
               <Text style={[Style.font14, Style.textSecondary]}>
                 Don't have code?{" "}
-                <Text style={styles.linkText} onPress={handleResendCode}>
-                  Resend code
-                </Text>
+                {canResend ? (
+                  <Text style={styles.linkText}>
+                    Resend code
+                  </Text>
+                ) : (
+                  <Text style={styles.timerText}>
+                    Resend code in {formatTime(resendTimer)}
+                  </Text>
+                )}
               </Text>
-            </View>
+            </TouchableOpacity>
 
             <Spacing type="v" val={16} />
 
@@ -234,6 +292,8 @@ const OtpVerification = ({ navigation }) => {
                 </View>
               </>
             )}
+            <Spacing type="v" val={ Platform.OS === "android" ? 50 : 20} />
+
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -300,6 +360,13 @@ const styles = StyleSheet.create({
   linkText: {
     color: COLORS.textOrange,
     fontWeight: "bold",
+  },
+  timerText: {
+    color: COLORS.gray,
+    fontWeight: "500",
+  },
+  linkContainerDisabled: {
+    opacity: 0.6,
   },
 });
 

@@ -131,7 +131,7 @@ const ResetPasswordScreen = ({ }) => {
                 label="Password"
                 value={password}
                 onChangeText={setPassword}
-                placeholder="6+ characters"
+                placeholder="8+ characters"
                 secureTextEntry={!showPassword}
                 rightIcon={showPassword ? "eye-off" : "eye"}
                 onRightIconPress={() => setShowPassword(!showPassword)}
@@ -141,7 +141,7 @@ const ResetPasswordScreen = ({ }) => {
                 label="Confirm Password"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
-                placeholder="6+ characters"
+                placeholder="8+ characters"
                 secureTextEntry={!showConfirmPassword}
                 rightIcon={showConfirmPassword ? "eye-off" : "eye"}
                 onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -168,6 +168,8 @@ const ResetPasswordScreen = ({ }) => {
                 </Text>
               </Text>
             </View>
+            <Spacing type="v" val={ Platform.OS === "android" ? 50 : 20} />
+
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/userSlice';
 import Style from '../../style/Style';
 import PhoneNumInput from '../../components/forms/PhoneInput';
+import Spacing from '../../components/common/Spacing';
 
 
 const AccountDetails = () => {
@@ -207,7 +208,7 @@ const AccountDetails = () => {
           <Text style={styles.stepIndicator}>Step 1 of 3</Text>
           <Text style={styles.title}>Account details</Text>
           <Text style={styles.subtitle}>
-            Enter some fo your information & secure password{'\n'}to go next step!
+            Enter some of your information & secure password{'\n'}to go next step!
           </Text>
         </View>
 
@@ -264,7 +265,7 @@ const AccountDetails = () => {
                 style={[styles.input, styles.passwordInput, errors.password && styles.inputError]}
                 value={formData.password}
                 onChangeText={(value) => handleInputChange('password', value)}
-                placeholder="6+ characters"
+                placeholder="8+ characters"
                 placeholderTextColor="#97a3b4"
                 secureTextEntry={!showPassword}
               />
@@ -286,7 +287,7 @@ const AccountDetails = () => {
                 style={[styles.input, styles.passwordInput, errors.confirmPassword && styles.inputError]}
                 value={formData.confirmPassword}
                 onChangeText={(value) => handleInputChange('confirmPassword', value)}
-                placeholder="6+ characters"
+                placeholder="8+ characters"
                 placeholderTextColor="#97a3b4"
                 secureTextEntry={!showConfirmPassword}
               />
@@ -299,7 +300,17 @@ const AccountDetails = () => {
             </View>
             {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
           </View>
-
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Age</Text>
+            <TextInput
+              style={[styles.input, errors.firstName && styles.inputError]}
+              value={formData.age}
+              onChangeText={(value) => handleInputChange('age', value)}
+              placeholder="18"
+              placeholderTextColor="#97a3b4"
+            />
+            {errors?.age ? <Text style={styles.errorText}>{errors?.age}</Text> : null}
+          </View>
           {/* Gender */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Gender</Text>
@@ -318,7 +329,7 @@ const AccountDetails = () => {
             {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
           </View>
 
-          {/* Age */}
+          {/* Age
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Age</Text>
             <View style={styles.ageGroup}>
@@ -339,7 +350,7 @@ const AccountDetails = () => {
               />
             </View>
             {errors.age ? <Text style={styles.errorText}>{errors.age}</Text> : null}
-          </View>
+          </View> */}
 
           {/* Next Button */}
           <View style={styles.buttonContainer}>
@@ -353,6 +364,7 @@ const AccountDetails = () => {
             />
           </View>
         </View>
+        <Spacing type="v" val={Platform.OS=='android' ? 50:10} />
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -506,7 +518,7 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: '#ef4444',
-    backgroundColor: '#fef2f2',
+    // backgroundColor: '#fef2f2',
   },
   errorText: {
     color: '#ef4444',
