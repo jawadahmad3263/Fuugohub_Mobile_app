@@ -14,6 +14,8 @@ import {
   TextInput,
   Alert,
   Pressable,
+  ActivityIndicator,
+  ActivityIndicatorBase,
 } from "react-native";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import Spacing from "../../components/common/Spacing";
@@ -27,15 +29,15 @@ import {
 import { Post } from "../../services/api";
 
 const OtpVerification = ({ navigation }) => {
-
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const route = useRoute();
   const [verifyToken, setVerifyToken] = useState(
     route?.params?.verificationToken || ""
   );
-  const [loading, setLoading] = useState(false)
-  
+  const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
   const [email, setEmail] = useState(route?.params?.email || "");
   const [resendTimer, setResendTimer] = useState(60); // 60 seconds timer
   const [canResend, setCanResend] = useState(false);
@@ -61,7 +63,7 @@ const OtpVerification = ({ navigation }) => {
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Timer effect
@@ -106,9 +108,9 @@ const OtpVerification = ({ navigation }) => {
     const otpString = otp.join("");
     if (otpString.length === 6) {
       // Handle OTP verification logic here
-      setLoading(true)
+      setLoading(true);
       console.log("Verifying OTP:", otpString);
-  
+
       const data = {
         verificationToken: verifyToken,
         type: "email_signup",
@@ -123,15 +125,15 @@ const OtpVerification = ({ navigation }) => {
             data: res?.data,
             email: email,
           });
-          setLoading(false)
+          setLoading(false);
         })
         .catch((err) => {
           Alert.alert("Error", err?.message);
           console.log(err);
-          setLoading(false)
+          setLoading(false);
         });
-    }else{
-        Alert.alert("Error", "Please enter a valid OTP")
+    } else {
+      Alert.alert("Error", "Please enter a valid OTP");
     }
   };
 
@@ -141,16 +143,16 @@ const OtpVerification = ({ navigation }) => {
       Alert.alert("Error", "Please wait for the timer to finish before resending");
       return;
     }
-    
-    if(!verifyToken){
-      Alert.alert("Error", "Please wait for the code to be sent")
-      return
+
+    if (!verifyToken) {
+      Alert.alert("Error", "Please wait for the code to be sent");
+      return;
     }
-    
+
     const data = {
       verificationToken: verifyToken,
     };
-    setLoading(true)
+    setResetLoading(true);
     Post({ endpoint: "auth/resend-otp", data: data })
       .then((res) => {
         console.log("RES", JSON.stringify(res));
@@ -158,13 +160,13 @@ const OtpVerification = ({ navigation }) => {
         setVerificationToken(res?.data?.verificationToken);
         // Restart timer after successful resend
         startResendTimer();
-        setLoading(false)
+        setResetLoading(false);
+        Alert.alert("Success", "Otp Code sent successfully");
       })
       .catch((err) => {
-        setLoading(false)
+        setResetLoading(false);
         Alert.alert("Error", err?.message);
         console.log(err);
-      
       });
   };
 
@@ -258,11 +260,25 @@ const OtpVerification = ({ navigation }) => {
             <Spacing type="v" val={24} />
 
             {/* Resend Code Link */}
-            <TouchableOpacity 
+            {resetLoading ? (
+              <TouchableOpacity 
+              
+              style={[styles.linkContainer, !canResend && styles.linkContainerDisabled,Style.row,Style.alignCenter]}
+              disabled={!canResend}
+            >
+            
+              <Text style={[Style.font14, Style.textSecondary]}>
+                Don't have code?{" "}
+              </Text>
+              <ActivityIndicator size={"small"} color={COLORS.black}/>
+            </TouchableOpacity>
+            ):(
+              <TouchableOpacity 
               onPress={handleResendCode} 
               style={[styles.linkContainer, !canResend && styles.linkContainerDisabled]}
               disabled={!canResend}
             >
+            
               <Text style={[Style.font14, Style.textSecondary]}>
                 Don't have code?{" "}
                 {canResend ? (
@@ -276,6 +292,8 @@ const OtpVerification = ({ navigation }) => {
                 )}
               </Text>
             </TouchableOpacity>
+            )}
+        
 
             <Spacing type="v" val={16} />
 
@@ -292,8 +310,7 @@ const OtpVerification = ({ navigation }) => {
                 </View>
               </>
             )}
-            <Spacing type="v" val={ Platform.OS === "android" ? 50 : 20} />
-
+            <Spacing type="v" val={Platform.OS === "android" ? 50 : 20} />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

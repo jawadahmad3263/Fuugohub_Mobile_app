@@ -13,6 +13,7 @@ import {
   Keyboard,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import Spacing from "../../components/common/Spacing";
@@ -27,6 +28,7 @@ import { Post } from "../../services/api";
 import { AUTH_SCREENS } from "../../navigation/screens";
 
 const OtpVerification = ({ navigation }) => {
+  const[resetLoading, setResetLoading] = useState(false)
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
@@ -151,19 +153,20 @@ const OtpVerification = ({ navigation }) => {
     const data = {
       verificationToken: verifyToken,
     };
-    setLoading(true)
+    setResetLoading(true)
     Post({ endpoint: "auth/resend-otp", data: data })
       .then((res) => {
         console.log("RES", JSON.stringify(res));
-        Alert.alert('Success', res?.message)
+        
         setVerifyToken(res?.data?.verificationToken);
         // setVerificationToken(res?.data?.verificationToken);
         // Restart timer after successful resend
         startResendTimer();
-        setLoading(false)
+        setResetLoading(false)
+        Alert.alert("Success", "Otp Code sent successfully")
       })
       .catch((err) => {
-        setLoading(false)
+        setResetLoading(false)
         Alert.alert("Error", err?.response?.data?.message);
         console.log(err);
       });
@@ -260,7 +263,20 @@ const OtpVerification = ({ navigation }) => {
             <Spacing type="v" val={24} />
 
             {/* Resend Code Link */}
-            <TouchableOpacity 
+            {resetLoading ? (
+              <TouchableOpacity 
+              
+              style={[styles.linkContainer, !canResend && styles.linkContainerDisabled,Style.row,Style.alignCenter]}
+              disabled={!canResend}
+            >
+            
+              <Text style={[Style.font14, Style.textSecondary]}>
+                Don't have code?{" "}
+              </Text>
+              <ActivityIndicator size={"small"} color={COLORS.black}/>
+            </TouchableOpacity>
+            ):(
+              <TouchableOpacity 
               onPress={handleResendCode} 
               style={[styles.linkContainer, !canResend && styles.linkContainerDisabled]}
               disabled={!canResend}
@@ -272,12 +288,22 @@ const OtpVerification = ({ navigation }) => {
                     Resend code
                   </Text>
                 ) : (
-                  <Text style={styles.timerText}>
+                 
+                  <>
+              {resetLoading?
+              <ActivityIndicator size={"small"} color={COLORS.black}/>:
+
+              <Text style={styles.timerText}>
                     Resend code in {formatTime(resendTimer)}
                   </Text>
+                 
+              }
+              </>
                 )}
               </Text>
             </TouchableOpacity>
+            )}
+        
 
             <Spacing type="v" val={16} />
 

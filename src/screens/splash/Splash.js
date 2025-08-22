@@ -17,20 +17,16 @@ const Splash = ({ navigation }) => {
         userToken();
       }, 1000);
 
-      // navigation.navigate('UserPreferences')
+      // navigation.navigate('AccountDetails')
     }, [])
   );
 
   const userToken = async () => {
     const token = await getUserToken();
-    const verificationToken = await getVerificationToken();
+   
     if (token) {
         getUser()
     //   navigation.navigate("Main");
-    } else if (verificationToken) {
-      navigation.navigate("OtpVerification", {
-        verificationToken: verificationToken,
-      });
     } else {
       navigation.navigate("Login");
     }

@@ -38,7 +38,7 @@ const AccountDetails = () => {
     phoneCountryCode: '+33', // Add country code tracking
     password: '',
     confirmPassword: '',
-    gender: '',
+    gender: 'male',
     age: '',
   });
 
@@ -107,7 +107,9 @@ const AccountDetails = () => {
         return '';
       
       case 'age':
-        if (!value) return 'Please select your age group';
+        if (!value) return 'Please enter your age';
+        if(value < 5) return 'You must be at least 5';
+        
         return '';
       
       default:
@@ -306,8 +308,9 @@ const AccountDetails = () => {
               style={[styles.input, errors.firstName && styles.inputError]}
               value={formData.age}
               onChangeText={(value) => handleInputChange('age', value)}
-              placeholder="18"
+              placeholder="Enter your age"
               placeholderTextColor="#97a3b4"
+              keyboardType='number-pad'
             />
             {errors?.age ? <Text style={styles.errorText}>{errors?.age}</Text> : null}
           </View>
