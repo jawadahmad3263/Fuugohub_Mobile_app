@@ -18,6 +18,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CustomTextInput from "../../components/forms/TextInput";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedExports";
@@ -25,7 +26,7 @@ import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
 import { getUserToken, getVerificationToken, setUserToken } from "../../utils/common";
-import { useFocusEffect } from "@react-navigation/native";
+
 import { Post } from "../../services/api";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/slices/userSlice";
@@ -41,13 +42,7 @@ const LoginScreen = ({ navigation }) => {
 
   const dispatch = useDispatch()
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // userToken()
-      // navigation.navigate('ImageUploadScreen')
-    
-    }, [])
-  );
+
 
  
   const userToken = async () => {
@@ -110,6 +105,59 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false)
     })
   }
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices();
+      
+      // Sign in
+      const userInfo = await GoogleSignin.signIn();
+      
+      console.log('Google Sign-In Success:', userInfo);
+      
+      // Extract user data
+      const { user, idToken } = userInfo;
+      
+      // Send the ID token to your backend for verification
+      const data = {
+        googleIdToken: idToken,
+        email: user.email,
+        name: user.name,
+        photo: user.photo,
+      };
+      
+      // Call your backend API with Google credentials
+      Post({endpoint: '/auth/google-login', data: data})
+        .then(async(res) => {
+          console.log('Google Login Response:', JSON.stringify(res));
+          dispatch(setUser(res?.data));
+          const token = res?.data?.token;
+          await setUserToken(token);
+          setLoading(false);
+          navigation.navigate('Main');
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.alert('Error', err?.response?.data?.message || 'Google login failed');
+          console.log('Google Login Error:', JSON.stringify(err));
+        });
+        
+    } catch (error) {
+      setLoading(false);
+      console.log('Google Sign-In Error:', error);
+      
+      if (error.code === 'SIGN_IN_CANCELLED') {
+        Alert.alert('Sign In Cancelled', 'You cancelled the sign in process');
+      } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+        Alert.alert('Error', 'Google Play Services not available');
+      } else {
+        Alert.alert('Error', 'Google sign in failed. Please try again.');
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -202,7 +250,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
             <Spacing type="v" val={20} />
             <View style={styles.socialRow}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleGoogleLogin}>
                 <Image
                   source={require("../../assets/images/google-icon.png")}
                   style={styles.socialIcon}
