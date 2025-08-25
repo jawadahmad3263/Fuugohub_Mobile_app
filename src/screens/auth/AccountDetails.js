@@ -32,8 +32,8 @@ const AccountDetails = () => {
     const navigation = useNavigation()
     const route = useRoute()
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    firstName: route?.params?.firstName || '',
+    lastName:route?.params?.lastName ||  '',
     phoneNumber: '',
     phoneCountryCode: '+33', // Add country code tracking
     password: '',
@@ -152,8 +152,10 @@ const AccountDetails = () => {
       gender: formData.gender,
       age: Number(formData.age),
     }
+
+    const endPoint  = route?.params?.action == 'signup' ? 'users/account-details' : '/auth/signup/account-details'
   
-    Post({endpoint: '/auth/signup/account-details', data: data}).then(async(res) => {
+    Post({endpoint: endPoint, data: data}).then(async(res) => {
       console.log('res', res)
       setLoading(false)
       dispatch(setUser(res?.data))

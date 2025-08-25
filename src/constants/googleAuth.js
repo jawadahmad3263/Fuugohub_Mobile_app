@@ -5,13 +5,13 @@
 
 export const GOOGLE_AUTH_CONFIG = {
   // Android Client ID for Google Sign-In
-  ANDROID_CLIENT_ID: '15954964870-k9tlsq4sc2l3kafg1q2q2s1a4obt6k94.apps.googleusercontent.com',
+   ANDROID_CLIENT_ID: '974118414647-b2a1o4bj7ip1pvtau8st76a31t24lue5.apps.googleusercontent.com',
   
   // iOS Client ID for Google Sign-In
-  IOS_CLIENT_ID: '15954964870-1b0np8rkeae6d99ddg15np56283qg115.apps.googleusercontent.com',
+   IOS_CLIENT_ID: '974118414647-17m9l4p5fr3fis1583d79l63q7kstv9f.apps.googleusercontent.com',
   
   // Web Client ID for Google Sign-In (if needed for backend verification)
-  WEB_CLIENT_ID: '15954964870-k9tlsq4sc2l3kafg1q2q2s1a4obt6k94.apps.googleusercontent.com',
+  WEB_CLIENT_ID: '974118414647-t6q8p9un96ae5vqnvmfcdca6dhv5fugv.apps.googleusercontent.com',
 };
 
 // SHA1 Certificate Fingerprints

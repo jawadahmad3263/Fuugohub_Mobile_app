@@ -3,10 +3,10 @@
  * Handles all main app screens after authentication
  */
 
-import React from 'react';
+import React, { cloneElement } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native';
 import { APP_SCREENS, MAIN_TAB_SCREENS } from '../screens';
 import HomeSelectedIcon from '../../assets/svg/home-selected-icon.svg';
 import HomeUnselectedIcon from '../../assets/svg/home-unselected-icon.svg';
@@ -85,6 +85,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           });
 
           if (!isFocused && !event.defaultPrevented) {
+
+             
+            if(route?.name == 'CameraRecording'){
+
+              navigation.navigate("DropVideoScreen")
+              return
+            }
             navigation.navigate(route.name);
           }
         };
@@ -165,6 +172,7 @@ const MainStack = () => {
       <Stack.Screen name="Analytics" component={APP_SCREENS.ANALYTICS.component} />
       <Stack.Screen name="BusinessPage" component={APP_SCREENS.BUSINESS_PAGE.component} />
       <Stack.Screen name="ProductDetailsScreen" component={APP_SCREENS.PRODUCT_DETAILS.component} />
+      <Stack.Screen name= "DropVideoScreen" component={APP_SCREENS.DROP_VIDEO_SCREEN.component} />
       {/* Add other main screens here */}
     </Stack.Navigator>
   );

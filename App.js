@@ -18,10 +18,10 @@ function App() {
   useEffect(() => {
     // Configure Google Sign-In globally
     GoogleSignin.configure({
-      androidClientId: GOOGLE_AUTH_CONFIG.ANDROID_CLIENT_ID,
       iosClientId: GOOGLE_AUTH_CONFIG.IOS_CLIENT_ID,
       webClientId: GOOGLE_AUTH_CONFIG.WEB_CLIENT_ID,
       offlineAccess: true,
+      forceCodeForRefreshToken: true,
     });
   }, []);
 

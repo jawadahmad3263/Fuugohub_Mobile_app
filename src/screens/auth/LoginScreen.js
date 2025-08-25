@@ -115,29 +115,41 @@ const LoginScreen = ({ navigation }) => {
       
       // Sign in
       const userInfo = await GoogleSignin.signIn();
+
+      const user = userInfo?.data?.user
       
       console.log('Google Sign-In Success:', userInfo);
-      
+      console.log('user', user)
+      const { accessToken, idToken } = await GoogleSignin.getTokens()
       // Extract user data
-      const { user, idToken } = userInfo;
-      
+      // const { user, idToken } = userInfo?.data;
+      // const idToken = userInfo?.data?.idToken;
+      console.log('idToken', idToken)
+      console.log('accessToken', accessToken)
       // Send the ID token to your backend for verification
       const data = {
-        googleIdToken: idToken,
-        email: user.email,
-        name: user.name,
-        photo: user.photo,
+     
+        access_token: accessToken,
       };
       
       // Call your backend API with Google credentials
-      Post({endpoint: '/auth/google-login', data: data})
+      Post({endpoint: 'auth/google', data: data})
         .then(async(res) => {
           console.log('Google Login Response:', JSON.stringify(res));
-          dispatch(setUser(res?.data));
+          
           const token = res?.data?.token;
           await setUserToken(token);
           setLoading(false);
-          navigation.navigate('Main');
+          if(res?.data?.action =='signup'){
+            navigation.navigate('AccountDetails',{
+              email:user?.email,
+              firstName:user?.givenName,
+              lastName:user?.familyName,
+              action:res?.data?.action
+            });
+            return
+          }
+          navigation.navigate('Splash');
         })
         .catch((err) => {
           setLoading(false);
