@@ -5510,15 +5510,19 @@ __metadata:
     prettier: 2.8.8
     react: 19.1.0
     react-native: 0.80.0
+    react-native-dropdown-picker: ^5.4.6
     react-native-image-picker: ^8.2.1
     react-native-linear-gradient: ^2.8.3
+    react-native-permissions: ^5.4.2
     react-native-phone-number-input: ^2.1.0
     react-native-safe-area-context: ^5.5.0
     react-native-screens: ^4.11.1
+    react-native-sound-player: ^0.14.5
     react-native-svg: ^15.12.0
     react-native-svg-transformer: ^1.5.1
     react-native-toast-message: ^2.3.2
     react-native-video: ^6.16.1
+    react-native-vision-camera: ^4.7.1
     react-redux: ^9.2.0
     react-test-renderer: 19.1.0
     typescript: 5.0.4
@@ -8484,6 +8488,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-dropdown-picker@npm:^5.4.6":
+  version: 5.4.6
+  resolution: "react-native-dropdown-picker@npm:5.4.6"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: d81ee3d68c17107a4d21dbdf9c2fe2ffe4bf4398973d10113139aadc0674221ce5038b945299fba2abc796930ec5e6d5f84291945bf903344493a15b8e2fca43
+  languageName: node
+  linkType: hard
+
 "react-native-image-picker@npm:^8.2.1":
   version: 8.2.1
   resolution: "react-native-image-picker@npm:8.2.1"
@@ -8511,6 +8525,20 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: f980d324e551bbc475c6406bdc5250a08242020cbe653412fa169bbdf51e28a502e225de105b4d696d6a1a1b733d44782469020f4936d8b3ce0e2c78e51cf58f
+  languageName: node
+  linkType: hard
+
+"react-native-permissions@npm:^5.4.2":
+  version: 5.4.2
+  resolution: "react-native-permissions@npm:5.4.2"
+  peerDependencies:
+    react: ">=18.1.0"
+    react-native: ">=0.70.0"
+    react-native-windows: ">=0.70.0"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: fac680b7d85fb979806156d6c9f90dee9c8299b83eb9d2d82bee50aec4baa71b0f5d3cf79e8bf02345e67f77d6cb0fbfbe7e54d02b6822de0ae2e0d9323a6614
   languageName: node
   linkType: hard
 
@@ -8548,6 +8576,13 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 22d3c302ef90a1cb20eed8c130b32e53d49288a19eba844f506a5e38342ef2add0d4f7a2ff5501cc05052aef6bf7f180db26a067b01f70f3cc12d3e1497329d6
+  languageName: node
+  linkType: hard
+
+"react-native-sound-player@npm:^0.14.5":
+  version: 0.14.5
+  resolution: "react-native-sound-player@npm:0.14.5"
+  checksum: 7f20105a97a1ec8d5eaf3f85653dc375177a9d251bb54178d8f18fc2a387e436579ee08c07e68ddfa21f8cad5f5583f2935d76d1587fd5303168159151396e91
   languageName: node
   linkType: hard
 
@@ -8597,6 +8632,26 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 40de297ed35527bf2cd77827c9842d51e84df78fbd0a7697235f8d0ca02de2b1a4562e9d3323391d514a9591a5078b10b26eac501ee7eb9a2a7c0c2ae45a90f5
+  languageName: node
+  linkType: hard
+
+"react-native-vision-camera@npm:^4.7.1":
+  version: 4.7.1
+  resolution: "react-native-vision-camera@npm:4.7.1"
+  peerDependencies:
+    "@shopify/react-native-skia": "*"
+    react: "*"
+    react-native: "*"
+    react-native-reanimated: "*"
+    react-native-worklets-core: "*"
+  peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
+    react-native-worklets-core:
+      optional: true
+  checksum: d3389d27a7f201c62ee47e6d1e9f3d1096f0d47b7e8e2509bb6cf0d2c2d2213d72217f64094d5e7bb5149e6b1678606ec1a2e4478701fe9a45586d774a134524
   languageName: node
   linkType: hard
 

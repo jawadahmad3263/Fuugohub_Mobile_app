@@ -44,6 +44,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>Fuugohub needs access to your camera to record videos and apply effects</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Fuugohub needs access to your microphone to record audio for videos</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

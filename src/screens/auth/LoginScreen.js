@@ -107,6 +107,7 @@ const LoginScreen = ({ navigation }) => {
   }
 
   const handleGoogleLogin = async () => {
+    if(loading) return;
     try {
       setLoading(true);
       
