@@ -5510,6 +5510,7 @@ __metadata:
     prettier: 2.8.8
     react: 19.1.0
     react-native: 0.80.0
+    react-native-create-thumbnail: ^2.1.1
     react-native-dropdown-picker: ^5.4.6
     react-native-image-picker: ^8.2.1
     react-native-linear-gradient: ^2.8.3
@@ -8485,6 +8486,15 @@ __metadata:
     react-native: "*"
     react-native-web: "*"
   checksum: e808169b45c5e8021462a6914f7c3fb28e84ae8d58097ed7b3418fee41efa2bc44012abc09ff3f3bd6ee14427b9efe1b0f8d8b3a19cc01325b2f2cd0137d5d00
+  languageName: node
+  linkType: hard
+
+"react-native-create-thumbnail@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "react-native-create-thumbnail@npm:2.1.1"
+  peerDependencies:
+    react-native: ">=0.59.0"
+  checksum: 430a3b19b1d69fa8fa9089d8b5684cbf5098756fffb1489a44e3d89ad4aff796be2c556d6f50046d2b1a58fea0f5b0e7f94c82e8d99fbf8fe73efde471a08f34
   languageName: node
   linkType: hard
 

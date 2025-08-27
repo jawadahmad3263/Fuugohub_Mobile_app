@@ -31,6 +31,7 @@ import Spacing from '../../components/common/Spacing';
 const AccountDetails = () => {
     const navigation = useNavigation()
     const route = useRoute()
+    console.log('route', route?.params)
   const [formData, setFormData] = useState({
     firstName: route?.params?.firstName || '',
     lastName:route?.params?.lastName ||  '',
@@ -116,6 +117,42 @@ const AccountDetails = () => {
         return '';
     }
   };
+  const validateFieldWithoutPassword = (field, value) => {
+    switch (field) {
+      case 'firstName':
+        if (!value.trim()) return 'Please enter your first name';
+        if (value.trim().length < 2) return 'First name must be at least 2 characters';
+        if (!/^[a-zA-Z\s]+$/.test(value.trim())) return 'First name can only contain letters';
+        return '';
+      
+      case 'lastName':
+        if (!value.trim()) return 'Please enter your last name';
+        if (value.trim().length < 2) return 'Last name must be at least 2 characters';
+        if (!/^[a-zA-Z\s]+$/.test(value.trim())) return 'Last name can only contain letters';
+        return '';
+      
+      case 'phoneNumber':
+        if (!value) return 'Please enter your phone number';
+        // Remove all non-digit characters and check length
+        const cleanPhone = value.replace(/[^0-9]/g, '');
+        if (cleanPhone.length < 7) return 'Please enter a valid phone number';
+        if (cleanPhone.length > 15) return 'Phone number is too long';
+        return '';
+    
+      case 'gender':
+        if (!value) return 'Please select your gender';
+        return '';
+      
+      case 'age':
+        if (!value) return 'Please enter your age';
+        if(value < 5) return 'You must be at least 5';
+        
+        return '';
+      
+      default:
+        return '';
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -152,9 +189,9 @@ const AccountDetails = () => {
       gender: formData.gender,
       age: Number(formData.age),
     }
-
+   
     const endPoint  = route?.params?.action == 'signup' ? 'users/account-details' : '/auth/signup/account-details'
-  
+    console.log('first', first)
     Post({endpoint: endPoint, data: data}).then(async(res) => {
       console.log('res', res)
       setLoading(false)
@@ -178,6 +215,60 @@ const AccountDetails = () => {
     })
   }
 
+  const handleNextWithoutPassword = () => {
+    console.log('without password')
+    if (!formData.firstName || !formData.lastName || !formData.phoneNumber || !formData.gender || !formData.age) {
+       setErrors({
+        firstName: 'Please enter your first name',
+        lastName: 'Please enter your last name',
+        phoneNumber: 'Please enter your phone number',
+        gender: 'Please select your gender',
+        age: 'Please enter your age',
+       })
+      return;
+    }
+
+    const email = route?.params?.email || route?.params?.data?.email;
+    if (!email) {
+      Alert.alert('Error', 'Email is required');
+      return;
+    }
+
+    setLoading(true)
+    const data = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phoneNumber ? formData.phoneCountryCode + formData.phoneNumber.replace(/[^0-9]/g, '') : "",
+      
+      email: email,
+      gender: formData.gender,
+      age: Number(formData.age),
+    }
+   
+    const endPoint  = route?.params?.action == 'signup' ? 'users/account-details' : '/auth/signup/account-details'
+    
+    Post({endpoint: endPoint, data: data}).then(async(res) => {
+      console.log('res', res)
+      setLoading(false)
+      dispatch(setUser(res?.data))
+      const token = res?.data?.token
+      await setUserToken(token)
+      
+     
+      const params ={
+        ...res?.data,
+      }
+     
+      navigation.navigate('UserPreferences', params)
+
+    }).catch((err) => {
+      setLoading(false)
+      Alert.alert("ERROR",err.message)
+
+      Alert.alert('Error', err?.response?.data?.message)
+
+    })
+  }
   const RadioButton = ({ selected, onPress, label }) => (
     <TouchableOpacity style={styles.radioContainer} onPress={onPress}>
       <View style={[styles.radioOuter, selected && styles.radioSelected]}>
@@ -262,6 +353,7 @@ const AccountDetails = () => {
           </View>
 
           {/* Password */}
+          {route?.params?.action != 'signup' && (
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.passwordContainer}>
@@ -282,8 +374,9 @@ const AccountDetails = () => {
             </View>
             {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
           </View>
-
+          )}
           {/* Confirm Password */}
+          {route?.params?.action != 'signup' && (
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password</Text>
             <View style={styles.passwordContainer}>
@@ -304,6 +397,7 @@ const AccountDetails = () => {
             </View>
             {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
           </View>
+          )}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Age</Text>
             <TextInput
@@ -364,7 +458,7 @@ const AccountDetails = () => {
                 title={'Next'}
                 style={styles.nextButton}
                 textStyle={styles.nextButtonText}
-                onPress={handleNext}
+                onPress={route?.params?.action == 'signup' ? handleNextWithoutPassword : handleNext}
                 loading={loading}
             />
           </View>

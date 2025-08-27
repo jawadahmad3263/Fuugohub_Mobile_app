@@ -18,6 +18,7 @@ import DropDetailsModal from './component/DropDetailsModal'
 import Style from '../../style/Style'
 import COLORS from '../../style/colors'
 import { createFormData } from '../../utils/common'
+import { createThumbnail } from 'react-native-create-thumbnail'
 
 const { width, height } = Dimensions.get('window')
 
@@ -129,8 +130,22 @@ const DropVideoScreen = () => {
         onRecordingFinished: async (video) => {
           console.log('Recording finished:', video)
           setRecordedVideo(video)
-          await uploadDrop(video)
+
+    // const thumbnail = await createThumbnail({
+    //         url:'https://www.youtube.com/shorts/P7pnlkZGzgs?feature=share',
+    //         timeStamp: 1000,
+    //         quality: 0.8,
+    //         format: 'jpeg',
+    //         width: 1,
+    //         height: 1,
+    //       }).then((Response) =>{
+    //         console.log('thumbnail', Response)
+    //       }).catch((error)=>{
+    //         console.log('thumbnail error', error)
+    //       })
+          // await uploadDrop(video)
           setIsRecording(false)
+
           // Open sound modal after recording is complete
           setVisible(true)
         },
