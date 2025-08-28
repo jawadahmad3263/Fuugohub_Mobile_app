@@ -19,6 +19,8 @@ import Style from '../../style/Style'
 import COLORS from '../../style/colors'
 import { createFormData } from '../../utils/common'
 import { createThumbnail } from 'react-native-create-thumbnail'
+import ThumbnilUploadModal from './component/ThumbnilUploadModal'
+import { PostFormData } from '../../services/api'
 
 const { width, height } = Dimensions.get('window')
 
@@ -32,6 +34,10 @@ const DropVideoScreen = () => {
   const [cameraPosition, setCameraPosition] = useState('back')
   const [cameraError, setCameraError] = useState(null)
   const [isCameraReady, setIsCameraReady] = useState(false)
+  const[isUploadthumbnilModalVisible,setIsUploadthumbnilModalVisible] = useState(false)
+  const[thumbnailImage,setThumbnilImage]=useState()
+  const[uploadImageLoading,setUploadImageLoading] = useState(false)
+  const[uplaodDropResponse,setUploadDropResponse] = useState()
   
   const camera = useRef(null)
   const devices = useCameraDevices()
@@ -130,24 +136,14 @@ const DropVideoScreen = () => {
         onRecordingFinished: async (video) => {
           console.log('Recording finished:', video)
           setRecordedVideo(video)
-
-    // const thumbnail = await createThumbnail({
-    //         url:'https://www.youtube.com/shorts/P7pnlkZGzgs?feature=share',
-    //         timeStamp: 1000,
-    //         quality: 0.8,
-    //         format: 'jpeg',
-    //         width: 1,
-    //         height: 1,
-    //       }).then((Response) =>{
-    //         console.log('thumbnail', Response)
-    //       }).catch((error)=>{
-    //         console.log('thumbnail error', error)
-    //       })
+ 
           // await uploadDrop(video)
           setIsRecording(false)
 
           // Open sound modal after recording is complete
-          setVisible(true)
+          // setVisible(true)
+          // open thumbnil modal image
+          setIsUploadthumbnilModalVisible(true)
         },
         onRecordingError: (error) => {
           console.error('Recording error:', error)
@@ -222,6 +218,35 @@ const DropVideoScreen = () => {
     setIsCameraReady(true)
   }
 
+  const onConfirmThumbnilImage = (image) =>{
+    // handle upload thumbnil image to server
+    console.log('drops/upload')
+    const endPoint = "drops/upload"
+    const data = {
+      'temp-drops':recordedVideo,
+      'temp-drops-cover-images':image
+    }
+    const formData = createFormData(data)
+    console.log('form', formData)
+    setUploadImageLoading(true)
+    PostFormData({
+      endpoint:endPoint,
+      data:formData
+    }).then((result) => {
+      console.log('result', result)
+      setUploadDropResponse(result)
+      setUploadImageLoading(false)
+      setThumbnilImage(image)
+      setIsUploadthumbnilModalVisible(false)
+      setVisible(true)
+    }).catch((err) => {
+      Alert.alert("ERROOR",err?.response?.data?.message)
+      console.log('err', err)
+      setUploadImageLoading(false)
+    });
+   
+
+  }
   if (!hasPermission) {
     return (
       <SafeAreaView style={[Style.container, styles.permissionContainer]}>
@@ -385,6 +410,17 @@ const DropVideoScreen = () => {
         onPost={handlePost}
         selectedSound={selectedSound}
         recordedVideo={recordedVideo}
+      />
+      <ThumbnilUploadModal
+      loading={uploadImageLoading}
+      visible={isUploadthumbnilModalVisible}
+      onClose={() =>{
+        setIsUploadthumbnilModalVisible(false)
+      }}
+      onConfirm={onConfirmThumbnilImage}
+      
+
+
       />
     </SafeAreaView>
   )
