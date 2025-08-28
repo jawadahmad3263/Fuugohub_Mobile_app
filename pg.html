@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate Properties</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f8fafc;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      padding: 8px 16px;
+      border-radius: 25px;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                  url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+      height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .hero h2 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+      opacity: 0.95;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid white;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-3px);
+    }
+
+    /* Properties Section */
+    .properties {
+      padding: 80px 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .properties h2 {
+      text-align: center;
+      margin-bottom: 50px;
+      font-size: 2.5rem;
+      color: #2d3748;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .properties h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    .property-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    .property {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .property:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .property img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .property:hover img {
+      transform: scale(1.05);
+    }
+
+    .property-content {
+      padding: 25px;
+    }
+
+    .property-content h3 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #2d3748;
+      font-weight: 600;
+    }
+
+    .property-content p {
+      font-size: 15px;
+      margin-bottom: 15px;
+      color: #718096;
+      line-height: 1.6;
+    }
+
+    .price {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 24px;
+      margin-top: 10px;
+    }
+
+    .property-features {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .feature {
+      background: #f7fafc;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+      color: white;
+      padding: 60px 30px 30px;
+      margin-top: 80px;
+    }
+
+    .footer-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .footer-column {
+      flex: 1;
+      min-width: 250px;
+      margin: 20px;
+    }
+
+    .footer-column h3 {
+      margin-bottom: 20px;
+      font-size: 20px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .footer-column p {
+      line-height: 1.8;
+      color: #e2e8f0;
+    }
+
+    .footer-column ul {
+      list-style: none;
+    }
+
+    .footer-column ul li {
+      margin: 12px 0;
+    }
+
+    .footer-column ul li a {
+      color: #e2e8f0;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .footer-column ul li a:hover {
+      color: #667eea;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 200px;
+      }
+      
+      nav ul {
+        gap: 15px;
+      }
+      
+      .properties h2 {
+        font-size: 2rem;
+      }
+    }
+
+    /* Services Section */
+    .services {
+      padding: 80px 30px;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .services-container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .services h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #2d3748;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .services h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    .services p {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #718096;
+      margin-bottom: 60px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .service-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      font-size: 32px;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover .service-icon {
+      transform: scale(1.1);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .service-card h3 {
+      font-size: 24px;
+      color: #2d3748;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .service-card p {
+      color: #718096;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      font-size: 15px;
+    }
+
+    .service-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 25px;
+    }
+
+    .service-features li {
+      padding: 8px 0;
+      color: #4a5568;
+      font-size: 14px;
+      position: relative;
+      padding-left: 25px;
+    }
+
+    .service-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .service-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .service-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Stats Section */
+    .stats {
+      padding: 60px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 20px;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .services h2 {
+        font-size: 2rem;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .service-card {
+        padding: 30px 20px;
+      }
+      
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+      }
+      
+      .stat-number {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>DreamHomes</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Properties</a></li>
+        <li><a href="#">Agents</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Discover Your Perfect Home</h2>
+      <p>Explore thousands of premium properties in the most desirable locations. From cozy apartments to luxury estates, find the home that matches your dreams and lifestyle.</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-primary">Browse Properties</a>
+        <a href="#" class="btn btn-secondary">Contact Agent</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Properties -->
+  <section class="properties">
+    <h2>Featured Properties</h2>
+    <div class="property-list">
+      <div class="property">
+        <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80" alt="Modern Family House">
+        <div class="property-content">
+          <h3>Modern Family House</h3>
+          <div class="property-features">
+            <span class="feature">4 Beds</span>
+            <span class="feature">3 Baths</span>
+            <span class="feature">2500 sqft</span>
+            <span class="feature">Pool</span>
+          </div>
+          <p>Stunning modern home with open concept design, gourmet kitchen, and beautiful backyard perfect for family gatherings.</p>
+          <p class="price">$450,000</p>
+        </div>
+      </div>
+      <div class="property">
+        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80" alt="Luxury Villa">
+        <div class="property-content">
+          <h3>Luxury Villa</h3>
+          <div class="property-features">
+            <span class="feature">5 Beds</span>
+            <span class="feature">4 Baths</span>
+            <span class="feature">4000 sqft</span>
+            <span class="feature">Garden</span>
+          </div>
+          <p>Exquisite luxury villa featuring premium finishes, smart home technology, and breathtaking views of the city skyline.</p>
+          <p class="price">$1,200,000</p>
+        </div>
+      </div>
+      <div class="property">
+        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Cozy Apartment">
+        <div class="property-content">
+          <h3>Cozy Apartment</h3>
+          <div class="property-features">
+            <span class="feature">2 Beds</span>
+            <span class="feature">1 Bath</span>
+            <span class="feature">900 sqft</span>
+            <span class="feature">Balcony</span>
+          </div>
+          <p>Charming apartment in a prime location with modern amenities, perfect for young professionals or small families.</p>
+          <p class="price">$180,000</p>
+        </div>
+      </div>
+      <div class="property">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Downtown Condo">
+        <div class="property-content">
+          <h3>Downtown Condo</h3>
+          <div class="property-features">
+            <span class="feature">3 Beds</span>
+            <span class="feature">2 Baths</span>
+            <span class="feature">1500 sqft</span>
+            <span class="feature">Gym</span>
+          </div>
+          <p>Sophisticated downtown condo with city views, building amenities, and easy access to shopping and entertainment.</p>
+          <p class="price">$320,000</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <div class="services-container">
+      <h2>Our Services</h2>
+      <p>We offer a comprehensive range of real estate services to help you achieve your property goals.</p>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-home"></i></div>
+          <h3>Property Search</h3>
+          <p>Find your dream home with our advanced search tools and expert agents.</p>
+          <ul class="service-features">
+            <li>Property listings across all price ranges</li>
+            <li>Detailed property descriptions and photos</li>
+            <li>Real-time market updates</li>
+          </ul>
+          <a href="#" class="service-btn">Learn More</a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-handshake"></i></div>
+          <h3>Negotiation</h3>
+          <p>Expert negotiation strategies to get you the best deal.</p>
+          <ul class="service-features">
+            <li>Market analysis and valuation</li>
+            <li>Negotiation tactics and advice</li>
+            <li>Closing assistance</li>
+          </ul>
+          <a href="#" class="service-btn">Learn More</a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Market Analysis</h3>
+          <p>Stay informed with our in-depth market analysis and expert insights.</p>
+          <ul class="service-features">
+            <li>Local market trends and forecasts</li>
+            <li>Property value assessments</li>
+            <li>Investment opportunities</li>
+          </ul>
+          <a href="#" class="service-btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Years of Experience</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Properties Sold</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-column">
+        <h3>About Us</h3>
+        <p>DreamHomes is your trusted partner in finding the perfect property. With over 15 years of experience, we bring you the best listings at competitive prices, backed by exceptional service and local market expertise.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Properties</a></li>
+          <li><a href="#">Agents</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Mortgage Calculator</a></li>
+          <li><a href="#">Property Valuation</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Contact Us</h3>
+        <p>Email: info@dreamhomes.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+        <p>Address: 123 Real Estate Ave, New York, NY 10001</p>
+        <p>Hours: Mon-Fri 9AM-6PM, Sat 10AM-4PM</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 DreamHomes. All Rights Reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer>
+
+</body>
+</html>
