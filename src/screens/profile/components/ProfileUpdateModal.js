@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import Style from '../../../style/Style';
 import COLORS from '../../../style/colors';
@@ -45,10 +46,7 @@ const ProfileUpdateModal = ({ visible, onClose, onSave }) => {
               <View style={styles.fieldGroup}>
                 <Text style={styles.label}>Change Profile Picture</Text>
                 <TouchableOpacity style={styles.uploadArea} activeOpacity={0.7}>
-                  <View style={styles.circularUploadArea}>
-                    <UploadPhotoIcon width={24} height={24} />
-                    <Text style={styles.uploadText}>Upload photo</Text>
-                  </View>
+                <UploadPhotoIcon height ={155} width ={155}  />
                 </TouchableOpacity>
               </View>
 
@@ -57,8 +55,9 @@ const ProfileUpdateModal = ({ visible, onClose, onSave }) => {
                 <Text style={styles.label}>Change Banner</Text>
                 <TouchableOpacity style={styles.uploadArea} activeOpacity={0.7}>
                   <View style={styles.rectangularUploadArea}>
-                    <UploadPhotoIcon width={24} height={24} />
-                    <Text style={styles.uploadText}>Upload banner image</Text>
+                    {/* <UploadPhotoIcon  /> */}
+                    <Image source={require("../../../assets/images/stack.png")} style={styles.image} />
+                    {/* <Text style={styles.uploadText}>Upload banner image</Text> */}
                   </View>
                 </TouchableOpacity>
               </View>
@@ -161,7 +160,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     backgroundColor: COLORS.white,
+    alignItems:'center'
   },
+
   circularUploadArea: {
     width: 120,
     height: 120,
@@ -175,10 +176,9 @@ const styles = StyleSheet.create({
   },
   rectangularUploadArea: {
     height: 80,
-    borderWidth: 1,
+   
     borderColor: COLORS.borderLight,
-    borderStyle: 'dashed',
-    borderRadius: 12,
+   
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -225,5 +225,4 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontSize: 16,
     fontWeight: '600',
-  },
-});
+  },});
