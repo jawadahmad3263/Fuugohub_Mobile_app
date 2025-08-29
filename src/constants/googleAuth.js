@@ -8,7 +8,9 @@ export const GOOGLE_AUTH_CONFIG = {
    ANDROID_CLIENT_ID: '974118414647-b2a1o4bj7ip1pvtau8st76a31t24lue5.apps.googleusercontent.com',
   
   // iOS Client ID for Google Sign-In
-   IOS_CLIENT_ID: '974118414647-17m9l4p5fr3fis1583d79l63q7kstv9f.apps.googleusercontent.com',
+  //  IOS_CLIENT_ID: '974118414647-17m9l4p5fr3fis1583d79l63q7kstv9f.apps.googleusercontent.com',
+  // new ios client id
+  IOS_CLIENT_ID: '974118414647-dqs27iln8kamq4kdhp1gevbvjrlndfrr.apps.googleusercontent.com',
   
   // Web Client ID for Google Sign-In (if needed for backend verification)
   WEB_CLIENT_ID: '974118414647-t6q8p9un96ae5vqnvmfcdca6dhv5fugv.apps.googleusercontent.com',

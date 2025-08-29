@@ -73,6 +73,22 @@ const DropVideoScreen = () => {
     console.log('Device values:', devices ? Object.values(devices).map(d => ({ id: d.id, position: d.position, name: d.name })) : 'No devices')
   }, [devices, device, cameraPosition])
 
+  // Check current permission status
+  const checkPermissionStatus = async () => {
+    if (Platform.OS === 'ios') {
+      try {
+        const cameraStatus = await request(PERMISSIONS.IOS.CAMERA)
+        const micStatus = await request(PERMISSIONS.IOS.MICROPHONE)
+        console.log('Current permission status - Camera:', cameraStatus, 'Microphone:', micStatus)
+        return cameraStatus === RESULTS.GRANTED && micStatus === RESULTS.GRANTED
+      } catch (error) {
+        console.error('Error checking permission status:', error)
+        return false
+      }
+    }
+    return false
+  }
+
   // Request camera permissions
   const requestCameraPermission = async () => {
     try {
@@ -103,9 +119,23 @@ const DropVideoScreen = () => {
           setHasPermission(false)
         }
       } else {
-        const cameraPermission = await request(PERMISSIONS.IOS.CAMERA)
-        const micPermission = await request(PERMISSIONS.IOS.MICROPHONE)
-        setHasPermission(cameraPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED)
+        // iOS permission handling with proper setup
+        try {
+          console.log('Requesting iOS camera permission...')
+          const cameraPermission = await request(PERMISSIONS.IOS.CAMERA)
+          console.log('Camera permission result:', cameraPermission)
+          
+          console.log('Requesting iOS microphone permission...')
+          const micPermission = await request(PERMISSIONS.IOS.MICROPHONE)
+          console.log('Microphone permission result:', micPermission)
+          
+          const bothGranted = cameraPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED
+          console.log('Both permissions granted:', bothGranted)
+          setHasPermission(bothGranted)
+        } catch (iosError) {
+          console.error('iOS permission request error:', iosError)
+          setHasPermission(false)
+        }
       }
     } catch (error) {
       console.error('Permission request error:', error)
@@ -114,7 +144,22 @@ const DropVideoScreen = () => {
   }
 
   useEffect(() => {
-    requestCameraPermission()
+    console.log('DropVideoScreen mounted, checking permissions...')
+    const initPermissions = async () => {
+      // First check current status
+      const currentStatus = await checkPermissionStatus()
+      console.log('Current permission status:', currentStatus)
+      
+      if (!currentStatus) {
+        console.log('Requesting permissions...')
+        await requestCameraPermission()
+      } else {
+        console.log('Permissions already granted')
+        setHasPermission(true)
+      }
+    }
+    
+    initPermissions()
   }, [])
 
   // Set camera ready after a delay to allow initialization

@@ -8,6 +8,8 @@
 	<string>fuugohub</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -27,14 +29,14 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.15954964870-1b0np8rkeae6d99ddg15np56283qg115</string>
+				<string>com.googleusercontent.apps.974118414647-dqs27iln8kamq4kdhp1gevbvjrlndfrr</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -48,10 +50,10 @@
 	<string>Fuugohub needs access to your camera to record videos and apply effects</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Fuugohub needs access to your location to provide location-based features and services</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Fuugohub needs access to your photo library to select and upload photos and videos</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Fuugohub needs access to your microphone to record audio for videos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Fuugohub needs access to your photo library to select and upload photos and videos</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
@@ -80,8 +82,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>
 </plist>
