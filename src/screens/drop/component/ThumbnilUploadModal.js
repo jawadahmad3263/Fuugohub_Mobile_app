@@ -114,7 +114,7 @@ const ThumbnilUploadModal = ({ visible, onClose, onConfirm, uploadFunction ,load
         onConfirm(selectedImage);
       }
     }
-    onClose();
+    // onClose();
   };
 
   const handleClose = () => {

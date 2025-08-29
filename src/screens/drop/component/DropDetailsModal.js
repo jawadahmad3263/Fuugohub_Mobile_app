@@ -7,11 +7,11 @@ import PrimaryButton from '../../../components/common/PrimaryButton'
 
 const { height: screenHeight } = Dimensions.get('window')
 
-const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVideo }) => {
+const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVideo ,loading}) => {
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
-  const [audience, setAudience] = useState('Everyone')
-  const [tagProduct, setTagProduct] = useState('Everyone')
+  const [audience, setAudience] = useState('')
+  const [tagProducts, setTagProducts] = useState([])
   const [enableMonetization, setEnableMonetization] = useState(false)
 
   // Dropdown states
@@ -21,44 +21,51 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
 
   // Dropdown data
   const locationItems = [
-    { label: 'New York, NY', value: 'new_york' },
-    { label: 'Los Angeles, CA', value: 'los_angeles' },
-    { label: 'Chicago, IL', value: 'chicago' },
-    { label: 'Houston, TX', value: 'houston' },
-    { label: 'Phoenix, AZ', value: 'phoenix' },
-    { label: 'Philadelphia, PA', value: 'philadelphia' },
-    { label: 'San Antonio, TX', value: 'san_antonio' },
-    { label: 'San Diego, CA', value: 'san_diego' },
-    { label: 'Dallas, TX', value: 'dallas' },
-    { label: 'San Jose, CA', value: 'san_jose' },
+    { label: 'New York, NY', value: 'new_york', lat: 40.7128, lng: -74.0060 },
+    { label: 'Los Angeles, CA', value: 'los_angeles', lat: 34.0522, lng: -118.2437 },
+    { label: 'Chicago, IL', value: 'chicago', lat: 41.8781, lng: -87.6298 },
+    { label: 'Houston, TX', value: 'houston', lat: 29.7604, lng: -95.3698 },
+    { label: 'Phoenix, AZ', value: 'phoenix', lat: 33.4484, lng: -112.0740 },
+    { label: 'Philadelphia, PA', value: 'philadelphia', lat: 39.9526, lng: -75.1652 },
+    { label: 'San Antonio, TX', value: 'san_antonio', lat: 29.4241, lng: -98.4936 },
+    { label: 'San Diego, CA', value: 'san_diego', lat: 32.7157, lng: -117.1611 },
+    { label: 'Dallas, TX', value: 'dallas', lat: 32.7767, lng: -96.7970 },
+    { label: 'San Jose, CA', value: 'san_jose', lat: 37.3382, lng: -121.8863 },
   ]
 
   const audienceItems = [
-    { label: 'Everyone', value: 'everyone' },
-    { label: 'Friends Only', value: 'friends' },
+ 
     { label: 'Private', value: 'private' },
-    { label: 'Followers', value: 'followers' },
+    { label: 'Public', value: 'public' },
   ]
 
   const tagProductItems = [
-    { label: 'Fashion & Style', value: 'fashion' },
-    { label: 'Beauty & Cosmetics', value: 'beauty' },
+    { label: 'Fashion', value: 'fashion' },
+    { label: 'Beauty and Cosmetics', value: 'beauty' },
     { label: 'Technology', value: 'technology' },
-    { label: 'Food & Beverage', value: 'food' },
-    { label: 'Fitness & Health', value: 'fitness' },
-    { label: 'Home & Lifestyle', value: 'home' },
+    { label: 'Food and Beverage', value: 'food' },
+    { label: 'Fitness and Health', value: 'fitness' },
+    { label: 'Home and Lifestyle', value: 'home' },
     { label: 'Travel', value: 'travel' },
     { label: 'Entertainment', value: 'entertainment' },
   ]
 
+  // Filter out already selected items
+  const availableTagProducts = tagProductItems.filter(item => 
+    !tagProducts.some(selected => selected.value === item.value)
+  )
+
   const handlePost = () => {
+    // Get selected location data with coordinates
+    const selectedLocationData = locationItems.find(item => item.value === location)
+    
     const dropData = {
-      sound: selectedSound,
-      description,
-      location,
-      audience,
-      tagProduct,
-      enableMonetization
+      caption: description,
+      hashtags: tagProducts.map(tag => tag.label),
+      privacy: audience,
+      location: selectedLocationData?.label || "Unknown",
+      lat: selectedLocationData?.lat || 0,
+      lng: selectedLocationData?.lng || 0
     }
     onPost && onPost(dropData)
   }
@@ -66,10 +73,31 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
   const handleDiscard = () => {
     setDescription('')
     setLocation('')
-    setAudience('Everyone')
-    setTagProduct('Everyone')
+    setAudience('')
+    setTagProducts([])
     setEnableMonetization(false)
     onClose && onClose()
+  }
+
+  const handleAddTagProduct = (item) => {
+    if (!tagProducts.some(tag => tag.value === item.value)) {
+      setTagProducts([...tagProducts, item])
+    }
+    setTagProductOpen(false)
+  }
+
+  const handleRemoveTagProduct = (valueToRemove) => {
+    setTagProducts(tagProducts.filter(tag => tag.value !== valueToRemove))
+  }
+
+  // Validation function to check if all required fields are filled
+  const isFormValid = () => {
+    const hasDescription = description.trim().length > 0
+    const hasLocation = location && location.trim().length > 0
+    const hasAudience = audience && audience.trim().length > 0
+    const hasTagProducts = tagProducts.length > 0
+    
+    return hasDescription && hasLocation && hasAudience && hasTagProducts
   }
 
   return (
@@ -179,13 +207,14 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
                   <Text style={[styles.label, Style.semibold]}>Tag Product</Text>
                   <DropDownPicker
                     open={tagProductOpen}
-                    value={tagProduct}
-                    items={tagProductItems}
+                    value={null}
+                    items={availableTagProducts}
                     setOpen={setTagProductOpen}
-                    setValue={setTagProduct}
+                    setValue={() => {}}
+                    onSelectItem={handleAddTagProduct}
                     style={styles.dropdown}
                     dropDownContainerStyle={styles.dropdownContainer}
-                    placeholder="Select product category"
+                    placeholder={availableTagProducts.length > 0 ? "Select product category" : "All categories selected"}
                     placeholderStyle={styles.dropdownPlaceholder}
                     textStyle={[styles.dropdownText, Style.regular]}
                     listMode="SCROLLVIEW"
@@ -194,7 +223,25 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
                     }}
                     zIndex={1000}
                     zIndexInverse={3000}
+                    disabled={availableTagProducts.length === 0}
                   />
+                  
+                  {/* Selected Tags */}
+                  {tagProducts.length > 0 && (
+                    <View style={styles.selectedTagsContainer}>
+                      {tagProducts.map((tag, index) => (
+                        <View key={tag.value} style={styles.tagItem}>
+                          <Text style={[styles.tagText, Style.regular]}>{tag.label}</Text>
+                          <TouchableOpacity 
+                            style={styles.removeTagButton}
+                            onPress={() => handleRemoveTagProduct(tag.value)}
+                          >
+                            <Text style={styles.removeTagText}>×</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                    </View>
+                  )}
                 </View>
 
                 {/* Enable Monetization */}
@@ -219,8 +266,10 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
                 <PrimaryButton
                   title="Post Now"
                   onPress={handlePost}
-                  style={styles.postButton}
-                  textStyle={styles.postButtonText}
+                  style={[styles.postButton, !isFormValid() && styles.disabledButton]}
+                  textStyle={[styles.postButtonText, !isFormValid() && styles.disabledButtonText]}
+                  loading={loading}
+                  disabled={!isFormValid() || loading}
                 />
                 <TouchableOpacity style={styles.discardButton} onPress={handleDiscard}>
                   <Text style={[styles.discardButtonText, Style.semibold]}>Discard</Text>
@@ -393,6 +442,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.white,
   },
+  disabledButton: {
+    backgroundColor: COLORS.borderLight,
+    opacity: 0.6,
+  },
+  disabledButtonText: {
+    color: COLORS.textSecondary,
+  },
   discardButton: {
     width: '100%',
     height: 50,
@@ -406,5 +462,37 @@ const styles = StyleSheet.create({
   discardButtonText: {
     fontSize: 18,
     color: COLORS.textPrimary,
+  },
+  selectedTagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 12,
+  },
+  tagItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 6,
+  },
+  tagText: {
+    fontSize: 14,
+    color: COLORS.white,
+  },
+  removeTagButton: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeTagText: {
+    fontSize: 12,
+    color: COLORS.white,
+    fontWeight: 'bold',
   },
 })

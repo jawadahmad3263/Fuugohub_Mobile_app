@@ -3,7 +3,7 @@
  * TikTok-like video feed screen
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,79 +15,128 @@ import {
   StatusBar,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import Video from 'react-native-video';
-import { useIsFocused } from '@react-navigation/native';
-import HeartIcon from '../../assets/svg/fav.svg';
-import CommentIcon from '../../assets/svg/comments-icons.svg';
-import SaveIcon from '../../assets/svg/save-icon.svg';
-import ShareIcon from '../../assets/svg/share.svg';
-import Coins from '../../assets/svg/coins-icon.svg';
-import COLORS from '../../style/colors';
+} from "react-native";
+import Video from "react-native-video";
+import { useIsFocused } from "@react-navigation/native";
+import HeartIcon from "../../assets/svg/fav.svg";
+import CommentIcon from "../../assets/svg/comments-icons.svg";
+import SaveIcon from "../../assets/svg/save-icon.svg";
+import ShareIcon from "../../assets/svg/share.svg";
+import Coins from "../../assets/svg/coins-icon.svg";
+import COLORS from "../../style/colors";
+import { Get, Post } from "../../services/api";
 
-const { width, height } = Dimensions.get('window');
-
-// Sample video data with working URLs
-const sampleVideos = [
-  {
-    id: '1',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    user: {
-      name: 'John Doe',
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-      isFollowing: false,
-    },
-    description: 'Lorem Ipsum has been the industry\'s standard description',
-    hashtags: '# Lorem ipsum # Lorem',
-    likes: 1420,
-    comments: 89,
-    shares: 45,
-    saves: 23,
-    coins: 156,
-    timeAgo: '2 days ago',
-  },
-  {
-    id: '2',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    user: {
-      name: 'Jane Smith',
-      avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-      isFollowing: true,
-    },
-    description: 'Amazing content that everyone loves!',
-    hashtags: '# Amazing # Content',
-    likes: 2340,
-    comments: 156,
-    shares: 78,
-    saves: 45,
-    coins: 289,
-    timeAgo: '1 day ago',
-  },
-  {
-    id: '3',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    user: {
-      name: 'Mike Johnson',
-      avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-      isFollowing: false,
-    },
-    description: 'Check out this incredible video!',
-    hashtags: '# Incredible # Video',
-    likes: 890,
-    comments: 67,
-    shares: 34,
-    saves: 12,
-    coins: 78,
-    timeAgo: '3 hours ago',
-  },
-];
+const { width, height } = Dimensions.get("window");
 
 const HomeScreen = ({ navigation }) => {
   const isFocused = useIsFocused();
-  const [activeTab, setActiveTab] = useState('Your Vibe');
+  const [activeTab, setActiveTab] = useState("Your Vibe");
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [videoLoading, setVideoLoading] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [feed, setFeed] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [likedItems, setLikedItems] = useState(new Set());
   const flatListRef = useRef(null);
+
+  useEffect(() => {
+    getFeed({
+      limit: 10,
+      offset: 0,
+    });
+  }, [isFocused]);
+
+  const getFeed = async (params) => {
+    setLoading(true);
+    Get({
+      endpoint: "drops/feed",
+      params: params,
+    })
+      .then((result) => {
+        console.log("Feed", result);
+        if (result.success === 1) {
+          setFeed(result.data);
+          setOffset(result.offset);
+          setHasMore(result.hasMore);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const loadMoreData = () => {
+    if (hasMore && !loading) {
+      getFeed({
+        limit: 10,
+        offset: offset + 10,
+      });
+    }
+  };
+
+  const formatTimeAgo = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return `${Math.floor(diffInSeconds / 2592000)}mo ago`;
+  };
+
+  const formatHashtags = (hashtags) => {
+    if (!hashtags || hashtags.length === 0) return "";
+    return hashtags.map(tag => `#${tag.name}`).join(" ");
+  };
+
+  const handleLike = async (dropId, currentLikesCount) => {
+    const isLiked = likedItems.has(dropId);
+    // const endpoint = isLiked ? "drops/unlike" : "drops/like";
+    const endpoint = 'drops/like'
+    try {
+      const response = await Post({
+        endpoint: endpoint,
+        data: {
+          dropId: dropId
+        }
+      });
+      
+      if (response.success === 1) {
+        // Update the feed with new like count
+        setFeed(prevFeed => 
+          prevFeed.map(item => 
+            item.id === dropId 
+              ? { 
+                  ...item, 
+                  likesCount: isLiked 
+                    ? Math.max(0, item.likesCount - 1) 
+                    : item.likesCount + 1 
+                }
+              : item
+          )
+        );
+        
+        // Update liked items set
+        setLikedItems(prev => {
+          const newSet = new Set(prev);
+          if (isLiked) {
+            newSet.delete(dropId);
+          } else {
+            newSet.add(dropId);
+          }
+          return newSet;
+        });
+      }
+    } catch (error) {
+      console.log("Like/Unlike error:", error);
+    }
+  };
 
   const renderVideoItem = ({ item, index }) => {
     const isActive = index === currentVideoIndex;
@@ -97,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.videoContainer}>
         {/* Video Player */}
         <Video
-          source={{ uri: item.videoUrl }}
+          source={{ uri: item.url }}
           style={styles.video}
           resizeMode="cover"
           repeat
@@ -107,14 +156,14 @@ const HomeScreen = ({ navigation }) => {
           playWhenInactive={false}
           ignoreSilentSwitch="ignore"
           onLoadStart={() => {
-            setVideoLoading(prev => ({ ...prev, [item.id]: true }));
+            setVideoLoading((prev) => ({ ...prev, [item.id]: true }));
           }}
           onLoad={() => {
-            setVideoLoading(prev => ({ ...prev, [item.id]: false }));
+            setVideoLoading((prev) => ({ ...prev, [item.id]: false }));
           }}
           onError={(error) => {
-            console.log('Video error:', error);
-            setVideoLoading(prev => ({ ...prev, [item.id]: false }));
+            console.log("Video error:", error);
+            setVideoLoading((prev) => ({ ...prev, [item.id]: false }));
           }}
         />
 
@@ -131,19 +180,35 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.topNavigation}>
             <View style={styles.tabNavigation}>
               <TouchableOpacity
-                style={[styles.tab, activeTab === 'Following' && styles.activeTab]}
-                onPress={() => setActiveTab('Following')}
+                style={[
+                  styles.tab,
+                  activeTab === "Following" && styles.activeTab,
+                ]}
+                onPress={() => setActiveTab("Following")}
               >
-                <Text style={[styles.tabText, activeTab === 'Following' && styles.activeTabText]}>
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === "Following" && styles.activeTabText,
+                  ]}
+                >
                   Following
                 </Text>
               </TouchableOpacity>
               <View style={styles.tabSeparator} />
               <TouchableOpacity
-                style={[styles.tab, activeTab === 'Your Vibe' && styles.activeTab]}
-                onPress={() => setActiveTab('Your Vibe')}
+                style={[
+                  styles.tab,
+                  activeTab === "Your Vibe" && styles.activeTab,
+                ]}
+                onPress={() => setActiveTab("Your Vibe")}
               >
-                <Text style={[styles.tabText, activeTab === 'Your Vibe' && styles.activeTabText]}>
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === "Your Vibe" && styles.activeTabText,
+                  ]}
+                >
                   Your Vibe
                 </Text>
               </TouchableOpacity>
@@ -164,40 +229,56 @@ const HomeScreen = ({ navigation }) => {
 
             {/* Action Buttons */}
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.actionButton}>
-                <HeartIcon width={24} height={24} />
-                <Text style={styles.actionCount}>{item.likes}</Text>
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => handleLike(item.id, item.likesCount)}
+              >
+                <HeartIcon 
+                  width={24} 
+                  height={24} 
+                  fill={likedItems.has(item.id) ? "#ff4757" : "none"}
+                  stroke={likedItems.has(item.id) ? "#ff4757" : "#fff"}
+                />
+                <Text style={[
+                  styles.actionCount,
+                  likedItems.has(item.id) && styles.likedCount
+                ]}>
+                  {item.likesCount}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
                 <CommentIcon width={24} height={24} />
-                <Text style={styles.actionCount}>{item.comments}</Text>
+                <Text style={styles.actionCount}>{item.commentsCount}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
                 <SaveIcon width={24} height={24} />
-                <Text style={styles.actionCount}>{item.saves}</Text>
+                <Text style={styles.actionCount}>{item.bookmarksCount}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
                 <ShareIcon width={24} height={24} />
-                <Text style={styles.actionCount}>{item.shares}</Text>
+                <Text style={styles.actionCount}>{item.sharesCount}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
                 <View style={styles.coinIcon}>
                   <Coins />
                 </View>
-                <Text style={styles.actionCount}>{item.coins}</Text>
+                <Text style={styles.actionCount}>0</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Bottom Content */}
           <View style={styles.bottomContent}>
-            <Text style={styles.timeAgo}>{item.timeAgo}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-            <Text style={styles.hashtags}>{item.hashtags}</Text>
+            <Text style={styles.timeAgo}>{formatTimeAgo(item.createdAt)}</Text>
+            <Text style={styles.description}>{item.caption}</Text>
+            <Text style={styles.hashtags}>{formatHashtags(item.hashtags)}</Text>
+            {item.location && (
+              <Text style={styles.location}>📍 {item.location}</Text>
+            )}
           </View>
         </View>
       </View>
@@ -214,12 +295,25 @@ const HomeScreen = ({ navigation }) => {
     itemVisiblePercentThreshold: 50,
   }).current;
 
+  if (loading && feed.length === 0) {
+    return (
+      <View style={styles.loadingScreen}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>Loading videos...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <FlatList
         ref={flatListRef}
-        data={sampleVideos}
+        data={feed}
         renderItem={renderVideoItem}
         keyExtractor={(item) => item.id}
         pagingEnabled
@@ -229,6 +323,15 @@ const HomeScreen = ({ navigation }) => {
         snapToInterval={height}
         snapToAlignment="start"
         decelerationRate="fast"
+        onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loading && feed.length > 0 ? (
+            <View style={styles.footerLoading}>
+              <ActivityIndicator size="small" color="#fff" />
+            </View>
+          ) : null
+        }
       />
     </View>
   );
@@ -237,30 +340,44 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-  
+    backgroundColor: "#000",
+  },
+  loadingScreen: {
+    flex: 1,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#fff",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  footerLoading: {
+    paddingVertical: 20,
+    alignItems: "center",
   },
   videoContainer: {
     width,
     height,
-    position: 'relative',
+    position: "relative",
   },
   video: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   loadingContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -272,9 +389,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   tabNavigation: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   tab: {
     paddingHorizontal: 20,
@@ -282,103 +399,113 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#fff',
+    borderBottomColor: "#fff",
   },
   tabText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   activeTabText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   tabSeparator: {
     width: 1,
     height: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     marginHorizontal: 10,
   },
   actionBar: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     bottom: 120,
-    alignItems: 'center',
+    alignItems: "center",
   },
   userProfile: {
     marginBottom: 20,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   followButton: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -5,
     right: -5,
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#f4511e',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#f4511e",
+    alignItems: "center",
+    justifyContent: "center",
   },
   followIcon: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   actionButtons: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   actionButton: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   actionCount: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
     marginTop: 5,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   coinIcon: {
     width: 24,
     height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   coinText: {
     fontSize: 20,
   },
   bottomContent: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 120 : 90,
+    position: "absolute",
+    bottom: Platform.OS === "ios" ? 120 : 90,
     left: 20,
     right: 80,
   },
   timeAgo: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
     marginBottom: 10,
     opacity: 0.8,
   },
   description: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   hashtags: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
+    marginBottom: 5,
     opacity: 0.8,
+  },
+  location: {
+    color: "#fff",
+    fontSize: 12,
+    opacity: 0.7,
+  },
+  likedCount: {
+    color: "#ff4757",
+    fontWeight: "bold",
   },
 });
 
-export default HomeScreen; 
+export default HomeScreen;
