@@ -188,7 +188,7 @@ const LoginScreen = ({ navigation }) => {
           // User cancelled, no need to show error
           return;
         }
-        Alert.alert('Apple Sign-In Error', result.error);
+        Alert.alert('Apple Sign-In Error', "Try Again");
         return;
       }
 
@@ -199,7 +199,7 @@ const LoginScreen = ({ navigation }) => {
     
       // Send the identity token to your backend for verification
       const data = {
-        access_token: identityToken,
+        identityToken: identityToken,
        
       };
       

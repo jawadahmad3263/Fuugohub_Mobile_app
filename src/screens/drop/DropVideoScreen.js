@@ -203,7 +203,7 @@ const DropVideoScreen = () => {
       // Start the recording timer
       const timer = setInterval(() => {
         setRecordingDuration(prev => prev + 1);
-      }, 1000);
+      }, 700);
       setRecordingTimer(timer);
       
       const video = await camera.current.startRecording({
@@ -361,7 +361,8 @@ const DropVideoScreen = () => {
     console.log("Sound added to video:", soundId);
     // Close sound modal and open drop details modal
     setVisible(false);
-    setDropDetailsVisible(true);
+    setTimeout(() => {  setDropDetailsVisible(true); }, 1000)
+   
   };
 
   const handlePost = (dropData) => {

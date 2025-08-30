@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
       .then((result) => {
         console.log("Feed", result);
         if (result.success === 1) {
-          setFeed(result.data);
+          setFeed((prev) => [...prev, ...result?.data]);
           setOffset(result.offset);
           setHasMore(result.hasMore);
         }

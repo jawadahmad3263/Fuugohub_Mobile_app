@@ -181,6 +181,7 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
   }
 
   const handleAddSound = (soundId) => {
+    Keyboard.dismiss()
     const selectedSound = sounds.find(sound => sound.id === soundId)
     console.log('Adding sound:', selectedSound)
     if (onAddSound) {
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '100%',
-    height: screenHeight,
+    height: '95%',
   },
   modalContainerKeyboardOpen: {
     height: '100%',
