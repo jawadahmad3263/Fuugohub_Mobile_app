@@ -38,6 +38,8 @@ const HomeScreen = ({ navigation }) => {
   const [feed, setFeed] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [likedItems, setLikedItems] = useState(new Set());
+  const [pausedVideos, setPausedVideos] = useState(new Set());
+  const [centerIconVideoId, setCenterIconVideoId] = useState(null);
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -138,9 +140,34 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const handleVideoPress = (videoId) => {
+    console.log("Video pressed:", videoId);
+    console.log("Current paused videos:", Array.from(pausedVideos));
+    
+    setPausedVideos(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        console.log("Removing from paused:", videoId);
+        newSet.delete(videoId);
+      } else {
+        console.log("Adding to paused:", videoId);
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+    
+    // Show center icon temporarily
+    setCenterIconVideoId(videoId);
+    setTimeout(() => {
+      setCenterIconVideoId(null);
+    }, 500);
+  };
+
   const renderVideoItem = ({ item, index }) => {
     const isActive = index === currentVideoIndex;
     const isLoading = videoLoading[item.id];
+    const isPaused = pausedVideos.has(item.id);
+    const showCenterIcon = centerIconVideoId === item.id && isActive;
 
     return (
       <View style={styles.videoContainer}>
@@ -150,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
           style={styles.video}
           resizeMode="cover"
           repeat
-          paused={!isActive || !isFocused}
+          paused={!isActive || !isFocused || isPaused}
           muted={false}
           playInBackground={false}
           playWhenInactive={false}
@@ -166,6 +193,35 @@ const HomeScreen = ({ navigation }) => {
             setVideoLoading((prev) => ({ ...prev, [item.id]: false }));
           }}
         />
+
+        {/* Touchable Overlay for Play/Pause */}
+        <TouchableOpacity 
+          style={styles.videoTouchable}
+          onPress={() => handleVideoPress(item.id)}
+          activeOpacity={1}
+        >
+          <View style={styles.touchableArea} />
+        </TouchableOpacity>
+
+        {/* Play/Pause Overlay */}
+        {isPaused && isActive && (
+          <View style={styles.playPauseOverlay}>
+            <View style={styles.playPauseIcon}>
+              <Text style={styles.playPauseText}>▶</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Center Icon Overlay */}
+        {showCenterIcon && (
+          <View style={styles.centerIconOverlay}>
+            <View style={styles.centerIcon}>
+              <Text style={styles.centerIconText}>
+                {isPaused ? "▶" : "⏸"}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Loading Indicator */}
         {isLoading && (
@@ -362,6 +418,18 @@ const styles = StyleSheet.create({
     height,
     position: "relative",
   },
+  videoTouchable: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 5,
+  },
+  touchableArea: {
+    width: "100%",
+    height: "100%",
+  },
   video: {
     width: "100%",
     height: "100%",
@@ -504,6 +572,52 @@ const styles = StyleSheet.create({
   },
   likedCount: {
     color: "#ff4757",
+    fontWeight: "bold",
+  },
+  playPauseOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  playPauseIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playPauseText: {
+    color: "#fff",
+    fontSize: 30,
+    fontWeight: "bold",
+  },
+  centerIconOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  centerIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centerIconText: {
+    color: "#fff",
+    fontSize: 30,
     fontWeight: "bold",
   },
 });

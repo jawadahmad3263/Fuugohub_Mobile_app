@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TextInput, Modal, Dimensions, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TextInput, Modal, Dimensions, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker'
 import COLORS from '../../../style/colors'
 import Style from '../../../style/Style'
@@ -13,6 +13,9 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
   const [audience, setAudience] = useState('')
   const [tagProducts, setTagProducts] = useState([])
   const [enableMonetization, setEnableMonetization] = useState(false)
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
+  const descriptionInputRef = useRef(null)
+  const scrollViewRef = useRef(null)
 
   // Dropdown states
   const [locationOpen, setLocationOpen] = useState(false)
@@ -41,11 +44,11 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
 
   const tagProductItems = [
     { label: 'Fashion', value: 'fashion' },
-    { label: 'Beauty and Cosmetics', value: 'beauty' },
+    { label: 'Beauty', value: 'beauty' },
     { label: 'Technology', value: 'technology' },
-    { label: 'Food and Beverage', value: 'food' },
-    { label: 'Fitness and Health', value: 'fitness' },
-    { label: 'Home and Lifestyle', value: 'home' },
+    { label: 'Food', value: 'food' },
+    { label: 'Fitness', value: 'fitness' },
+    { label: 'Home', value: 'home' },
     { label: 'Travel', value: 'travel' },
     { label: 'Entertainment', value: 'entertainment' },
   ]
@@ -54,6 +57,40 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
   const availableTagProducts = tagProductItems.filter(item => 
     !tagProducts.some(selected => selected.value === item.value)
   )
+
+  // Keyboard event listeners
+  useEffect(() => {
+    if (!visible) return; // Only set up listeners when modal is visible
+    
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true)
+    })
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false)
+    })
+
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [visible]) // Only re-run when visible changes
+
+  // Cleanup when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setKeyboardVisible(false)
+      setDescription('')
+      setLocation('')
+      setAudience('')
+      setTagProducts([])
+      setEnableMonetization(false)
+      
+      // Reset dropdown states
+      setLocationOpen(false)
+      setAudienceOpen(false)
+      setTagProductOpen(false)
+    }
+  }, [visible])
 
   const handlePost = () => {
     // Get selected location data with coordinates
@@ -112,19 +149,33 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <View style={styles.overlay}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
+        <View style={[
+          styles.overlay,
+          keyboardVisible && styles.overlayKeyboardOpen
+        ]}>
+          <View style={[
+            styles.modalContainer,
+            keyboardVisible && styles.modalContainerKeyboardOpen
+          ]}>
+            <View style={[
+              styles.modalContent,
+              keyboardVisible && styles.modalContentKeyboardOpen
+            ]}>
               {/* Header */}
               <View style={styles.header}>
                 <Text style={[styles.headerTitle, Style.semibold]}>Drop Details</Text>
               </View>
 
               <ScrollView 
+                ref={scrollViewRef}
                 style={styles.content} 
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
-                contentContainerStyle={styles.scrollContent}
+                keyboardDismissMode="interactive"
+                contentContainerStyle={[
+                  styles.scrollContent,
+                  keyboardVisible && styles.scrollContentKeyboardOpen
+                ]}
               >
                 {/* Sound Info */}
                 {selectedSound && (
@@ -143,6 +194,7 @@ const DropDetailsModal = ({ visible, onClose, onPost, selectedSound, recordedVid
                 <View style={styles.inputGroup}>
                   <Text style={[styles.label, Style.semibold]}>Description</Text>
                   <TextInput
+                    ref={descriptionInputRef}
                     style={styles.textArea}
                     placeholder="Lorem ipsum dummy text"
                     placeholderTextColor={COLORS.textSecondary}
@@ -295,9 +347,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  overlayKeyboardOpen: {
+    justifyContent: 'flex-end',
+  },
   modalContainer: {
     width: '100%',
     height: screenHeight * 0.9,
+  },
+  modalContainerKeyboardOpen: {
+    height: '100%',
+    justifyContent: 'flex-end',
   },
   modalContent: {
     backgroundColor: COLORS.white,
@@ -308,6 +367,10 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     flex: 1,
     ...Style.cardShadow,
+  },
+  modalContentKeyboardOpen: {
+    paddingBottom: 20,
+    maxHeight: '80%',
   },
   header: {
     alignItems: 'center',
@@ -323,6 +386,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 20,
+  },
+  scrollContentKeyboardOpen: {
+    paddingBottom: 10,
   },
   soundInfo: {
     flexDirection: 'row',

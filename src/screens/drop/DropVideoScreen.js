@@ -25,10 +25,13 @@ import { createFormData } from "../../utils/common";
 import { createThumbnail } from "react-native-create-thumbnail";
 import ThumbnilUploadModal from "./component/ThumbnilUploadModal";
 import { Post, PostFormData } from "../../services/api";
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
 const DropVideoScreen = () => {
+  const navigation = useNavigation()
   const [visible, setVisible] = useState(false);
   const [dropDetailsVisible, setDropDetailsVisible] = useState(false);
   const [selectedSound, setSelectedSound] = useState(null);
@@ -44,6 +47,8 @@ const DropVideoScreen = () => {
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
   const [uplaodDropResponse, setUploadDropResponse] = useState();
   const [postLoading, setPostLoading] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [recordingTimer, setRecordingTimer] = useState(null);
   // console.log('uplaodDropResponse', uplaodDropResponse.data[0])
   const camera = useRef(null);
   const devices = useCameraDevices();
@@ -76,23 +81,7 @@ const DropVideoScreen = () => {
     return null;
   }, [devices, cameraPosition]);
 
-  // Debug camera devices
-  useEffect(() => {
-    console.log("Available devices:", devices);
-    console.log("Current device:", device);
-    console.log("Camera position:", cameraPosition);
-    console.log("Device keys:", devices ? Object.keys(devices) : "No devices");
-    console.log(
-      "Device values:",
-      devices
-        ? Object.values(devices).map((d) => ({
-            id: d.id,
-            position: d.position,
-            name: d.name,
-          }))
-        : "No devices"
-    );
-  }, [devices, device, cameraPosition]);
+  
 
   // Check current permission status
   const checkPermissionStatus = async () => {
@@ -208,10 +197,25 @@ const DropVideoScreen = () => {
 
     try {
       setIsRecording(true);
+      setRecordingDuration(0);
+      
+      // Start the recording timer
+      const timer = setInterval(() => {
+        setRecordingDuration(prev => prev + 1);
+      }, 1000);
+      setRecordingTimer(timer);
+      
       const video = await camera.current.startRecording({
         onRecordingFinished: async (video) => {
           console.log("Recording finished:", video);
           setRecordedVideo(video);
+
+          // Clear the timer
+          if (recordingTimer) {
+            clearInterval(recordingTimer);
+            setRecordingTimer(null);
+          }
+          setRecordingDuration(0);
 
           // await uploadDrop(video)
           setIsRecording(false);
@@ -224,6 +228,14 @@ const DropVideoScreen = () => {
         onRecordingError: (error) => {
           console.error("Recording error:", error);
           setIsRecording(false);
+          
+          // Clear the timer on error
+          if (recordingTimer) {
+            clearInterval(recordingTimer);
+            setRecordingTimer(null);
+          }
+          setRecordingDuration(0);
+          
           Alert.alert(
             "Recording Error",
             "Failed to record video. Please try again."
@@ -233,6 +245,14 @@ const DropVideoScreen = () => {
     } catch (error) {
       console.error("Start recording error:", error);
       setIsRecording(false);
+      
+      // Clear the timer on error
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        setRecordingTimer(null);
+      }
+      setRecordingDuration(0);
+      
       Alert.alert(
         "Recording Error",
         "Failed to start recording. Please try again."
@@ -251,14 +271,82 @@ const DropVideoScreen = () => {
     console.log("form", formData);
   };
 
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleGalleryVideoPick = async () => {
+    try {
+      const options = {
+        mediaType: 'video',
+        videoQuality: 'high',
+        includeBase64: false,
+        maxWidth: 1080,
+        maxHeight: 1920,
+      };
+
+      const result = await launchImageLibrary(options);
+
+      if (result.didCancel) {
+        console.log('User cancelled video picker');
+        return;
+      }
+
+      if (result.errorCode) {
+        console.error('Image picker error:', result.errorMessage);
+        Alert.alert('Error', 'Failed to pick video from gallery');
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const selectedVideo = result.assets[0];
+        console.log('Selected video:', selectedVideo);
+
+        // Convert the selected video to match the recorded video format
+        const videoData = {
+          path: selectedVideo.uri,
+          type: selectedVideo.type || 'video/mp4',
+          fileName: selectedVideo.fileName || 'gallery_video.mp4',
+          duration: selectedVideo.duration,
+          size: selectedVideo.fileSize,
+        };
+
+        // Set the video data in the same state as recorded videos
+        setRecordedVideo(videoData);
+        
+        // Open thumbnail modal directly (same flow as recording)
+        setIsUploadthumbnilModalVisible(true);
+      }
+    } catch (error) {
+      console.error('Gallery video pick error:', error);
+      Alert.alert('Error', 'Failed to pick video from gallery');
+    }
+  };
+
   const stopRecording = async () => {
     if (!camera.current) return;
 
     try {
       await camera.current.stopRecording();
+      
+      // Clear the timer
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        setRecordingTimer(null);
+      }
+      setRecordingDuration(0);
     } catch (error) {
       console.error("Stop recording error:", error);
       setIsRecording(false);
+      
+      // Clear the timer on error
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        setRecordingTimer(null);
+      }
+      setRecordingDuration(0);
     }
   };
 
@@ -299,6 +387,7 @@ const DropVideoScreen = () => {
         setDropDetailsVisible(false);
         setSelectedSound(null);
         setRecordedVideo(null);
+        navigation.goBack();
       })
       .catch((err) => {
         Alert.alert("Error", err?.response?.data?.message);
@@ -517,17 +606,51 @@ const DropVideoScreen = () => {
 
       {/* Bottom Controls */}
       <View style={styles.bottomControls}>
-        <View style={styles.recordButtonContainer}>
+        {/* Recording Timer */}
+        {isRecording && (
+          <View style={styles.recordingTimerContainer}>
+            <Text style={styles.recordingTimerText}>
+              {formatTime(recordingDuration)}
+            </Text>
+          </View>
+        )}
+        
+        <View style={styles.controlsContainer}>
+          {/* Gallery Button */}
+        <View  style ={{
+            width: 50,
+            height: 50,
+        }}/>
+
+          {/* Record Button */}
+          <View style={styles.recordButtonContainer}>
+            <TouchableOpacity
+              style={[styles.recordButton, isRecording && styles.recordingButton]}
+              onPress={isRecording ? stopRecording : startRecording}
+              activeOpacity={0.8}
+              disabled={!isCameraReady}
+            >
+              <View style={isRecording ? styles.isRecordingRecordButtonInner : styles.recordButtonInner} />
+            </TouchableOpacity>
+            <Text style={styles.cameraText}>Camera</Text>
+            <View style={styles.cameraDot} />
+          </View>
+
+         
           <TouchableOpacity
-            style={[styles.recordButton, isRecording && styles.recordingButton]}
-            onPress={isRecording ? stopRecording : startRecording}
+            style={[
+              styles.galleryButton,
+              isRecording && styles.galleryButtonDisabled
+            ]}
+            onPress={handleGalleryVideoPick}
             activeOpacity={0.8}
-            disabled={!isCameraReady}
+            disabled={isRecording}
           >
-            <View style={styles.recordButtonInner} />
+            <Text style={[
+              styles.galleryButtonText,
+              isRecording && styles.galleryButtonTextDisabled
+            ]}>📁</Text>
           </TouchableOpacity>
-          <Text style={styles.cameraText}>Camera</Text>
-          <View style={styles.cameraDot} />
         </View>
       </View>
 
@@ -541,14 +664,18 @@ const DropVideoScreen = () => {
       </TouchableOpacity>
 
       {/* Add Sound Modal */}
-      <AddSoundModal
+     
+        <AddSoundModal
         visible={visible}
         onClose={() => setVisible(false)}
         onAddSound={handleAddSound}
       />
+       
+    
 
       {/* Drop Details Modal */}
-      <DropDetailsModal
+     
+        <DropDetailsModal
         visible={dropDetailsVisible}
         onClose={() => setDropDetailsVisible(false)}
         onPost={handlePost}
@@ -556,7 +683,9 @@ const DropVideoScreen = () => {
         recordedVideo={recordedVideo}
         loading={postLoading}
       />
-      <ThumbnilUploadModal
+       
+  
+        <ThumbnilUploadModal
         loading={uploadImageLoading}
         visible={isUploadthumbnilModalVisible}
         onClose={() => {
@@ -564,6 +693,8 @@ const DropVideoScreen = () => {
         }}
         onConfirm={onConfirmThumbnilImage}
       />
+    
+    
     </SafeAreaView>
   );
 };
@@ -659,6 +790,19 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 34 : 20,
     zIndex: 10,
   },
+  recordingTimerContainer: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  recordingTimerText: {
+    color: "#ff4444",
+    fontSize: 18,
+    fontWeight: "600",
+    fontFamily: "monospace",
+  },
   recordButtonContainer: {
     alignItems: "center",
   },
@@ -674,9 +818,15 @@ const styles = StyleSheet.create({
   },
   recordingButton: {
     backgroundColor: "#ff4444",
-    borderColor: "#ff4444",
+    borderColor: "white",
   },
   recordButtonInner: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "grey",
+  },
+  isRecordingRecordButtonInner: {
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -798,5 +948,33 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
+  },
+  controlsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 40,
+  },
+  galleryButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fff",
+    opacity: 0.8,
+  },
+  galleryButtonText: {
+    fontSize: 24,
+    color: "#fff",
+  },
+  galleryButtonDisabled: {
+    opacity: 0.3,
+  },
+  galleryButtonTextDisabled: {
+    opacity: 0.5,
   },
 });

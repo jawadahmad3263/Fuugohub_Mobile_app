@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Modal, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
 import SoundIcon from '../../../assets/svg/sound-icon-black.svg'
 import PlayIcon from '../../../assets/svg/play-icon.svg'
 import AddSoundIcon from '../../../assets/svg/plus-button-red-gradient.svg'
@@ -18,6 +18,10 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
   const [error, setError] = useState(null)
   const [playingTrackId, setPlayingTrackId] = useState(null)
   const [playLoading, setPlayLoading] = useState(null)
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
+  const searchInputRef = useRef(null)
+  const scrollViewRef = useRef(null)
+  const searchTimeoutRef = useRef(null)
 
   // Fetch songs from real APIs with fallbacks
   const fetchSongs = async (searchQuery = '') => {
@@ -83,26 +87,61 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
       audioService.stopSound()
       setPlayingTrackId(null)
       setPlayLoading(null)
+      setKeyboardVisible(false)
+      setSearchText('')
+      
+      // Clear any pending search timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+        searchTimeoutRef.current = null
+      }
     }
   }, [visible])
+
+  // Keyboard event listeners
+  useEffect(() => {
+    if (!visible) return; // Only set up listeners when modal is visible
+    
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true)
+    })
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false)
+    })
+
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [visible]) // Only re-run when visible changes
 
   // Search functionality with debouncing
   const handleSearch = (text) => {
     setSearchText(text)
     
     // Clear previous timeout
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout)
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
     }
     
     // Set new timeout for search
-    this.searchTimeout = setTimeout(() => {
+    searchTimeoutRef.current = setTimeout(() => {
       if (text.length > 2) {
         fetchSongs(text)
       } else if (text.length === 0) {
         fetchSongs()
       }
     }, 500) // 500ms delay to avoid too many API calls
+  }
+
+  // Handle search input focus
+  const handleSearchFocus = () => {
+    // Ensure the search input is visible when focused
+    setTimeout(() => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus()
+      }
+    }, 100)
   }
 
   // Handle play button press
@@ -171,9 +210,19 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+      <KeyboardAvoidingView 
+        style={styles.overlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <View style={[
+          styles.modalContainer,
+          keyboardVisible && styles.modalContainerKeyboardOpen
+        ]}>
+          <View style={[
+            styles.modalContent,
+            keyboardVisible && styles.modalContentKeyboardOpen
+          ]}>
             {/* Header */}
             <View style={styles.header}>
               <SoundIcon width={24} height={24} />
@@ -184,17 +233,25 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
             {/* Search Bar */}
             <View style={styles.searchContainer}>
               <TextInput
+                ref={searchInputRef}
                 style={styles.searchInput}
                 placeholder="Search songs..."
                 placeholderTextColor={COLORS.textSecondary}
                 value={searchText}
                 onChangeText={handleSearch}
+                returnKeyType="search"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onFocus={handleSearchFocus}
               />
               <SearchIcon width={20} height={20} style={styles.searchIcon} />
             </View>
 
             {/* Sounds List */}
-            <View style={styles.soundsListContainer}>
+            <View style={[
+              styles.soundsListContainer,
+              keyboardVisible && styles.soundsListContainerKeyboardOpen
+            ]}>
               {loading ? (
                 <View style={styles.loadingContainer}>
                   <ActivityIndicator size="large" color={COLORS.primary} />
@@ -209,9 +266,12 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
                 </View>
               ) : (
                 <ScrollView 
+                  ref={scrollViewRef}
                   style={styles.soundsList} 
                   showsVerticalScrollIndicator={true}
                   contentContainerStyle={styles.soundsListContent}
+                  keyboardShouldPersistTaps="handled"
+                  keyboardDismissMode="interactive"
                 >
                   {sounds.length === 0 ? (
                     <View style={styles.emptyContainer}>
@@ -263,7 +323,7 @@ const AddSoundModal = ({ visible, onClose, onAddSound }) => {
             </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   )
 }
@@ -281,6 +341,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: screenHeight,
   },
+  modalContainerKeyboardOpen: {
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
   modalContent: {
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 20,
@@ -290,6 +354,10 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     flex: 1,
     ...Style.cardShadow,
+  },
+  modalContentKeyboardOpen: {
+    paddingBottom: 20,
+    maxHeight: '80%',
   },
   header: {
     flexDirection: 'row',
@@ -334,6 +402,10 @@ const styles = StyleSheet.create({
   },
   soundsListContainer: {
     flex: 1,
+  },
+  soundsListContainerKeyboardOpen: {
+    flex: 1,
+    maxHeight: '60%',
   },
   soundsList: {
     flex: 1,
