@@ -6,7 +6,8 @@
 import React, { cloneElement } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, Alert, Platform, Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { APP_SCREENS, MAIN_TAB_SCREENS } from '../screens';
 import HomeSelectedIcon from '../../assets/svg/home-selected-icon.svg';
 import HomeUnselectedIcon from '../../assets/svg/home-unselected-icon.svg';
@@ -67,10 +68,60 @@ const appScreens = [
     
   },
 ];
+// Utility function to detect device type
+const isDeviceWithHomeIndicator = () => {
+  const { height, width } = Dimensions.get('window');
+  const aspectRatio = height / width;
+  
+  // iPhone X and newer have aspect ratio > 2
+  if (Platform.OS === 'ios' && aspectRatio > 2) {
+    return true;
+  }
+  
+  // For Android, check if there's a bottom inset
+  return false;
+};
+
 // Custom Tab Bar Component
 const CustomTabBar = ({ state, descriptors, navigation }) => {
+  const insets = useSafeAreaInsets();
+  const { height: screenHeight } = Dimensions.get('window');
+  
+  // Debug logging for safe area insets
+  console.log('Safe Area Insets:', {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: insets.left,
+    right: insets.right,
+    platform: Platform.OS,
+    screenHeight
+  });
+  
+  // Calculate dynamic height based on device and safe area
+  const getTabBarHeight = () => {
+    const baseHeight = 90;
+    const bottomInset = insets.bottom;
+    
+    // For devices with home indicator (iPhone X and newer, some Android devices)
+    if (bottomInset > 0) {
+      return baseHeight + bottomInset;
+    }
+    
+    // For Android devices with navigation bar
+    if (Platform.OS === 'android') {
+      // Add extra padding for Android navigation bar
+      return baseHeight + 15;
+    }
+    
+    // For older devices without home indicator
+    return baseHeight;
+  };
+
   return (
-    <View style={styles.tabBar}>
+    <View style={[styles.tabBar, { 
+      height: getTabBarHeight(),
+      paddingBottom: insets.bottom > 0 ? insets.bottom : (Platform.OS === 'android' ? 10 : 20),
+    }]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label = options.tabBarLabel ?? options.title ?? route.name;
@@ -106,7 +157,9 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               onPress={onPress}
               activeOpacity={0.8}
             >
-              <IconComponent />
+              <View style={styles.centerButtonInner}>
+                <IconComponent  />
+              </View>
             </TouchableOpacity>
           );
         }
@@ -182,27 +235,45 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#000000',
-    height: 90,
-    paddingBottom: 20,
     paddingTop: 10,
     borderTopWidth: 0,
     elevation: 0,
     shadowOpacity: 0,
+    // Add shadow for better visual separation
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 0.1,
+    // Ensure proper alignment
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
+    minHeight: 50, // Ensure minimum height for touch targets
+    height: 70, // Match center button height
   },
   centerButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 70,
+    marginTop: -15,
+  },
+  centerButtonInner: {
     width: 70,
     height: 70,
-    borderRadius: 30,
+    borderRadius: 35,
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -10,
+    // Remove shadow and border for clean icon display
   },
   tabLabel: {
     fontSize: 12,

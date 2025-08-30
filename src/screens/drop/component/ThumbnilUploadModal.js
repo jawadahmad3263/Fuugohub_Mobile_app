@@ -147,13 +147,15 @@ const ThumbnilUploadModal = ({ visible, onClose, onConfirm, uploadFunction ,load
                       style={styles.selectedImage}
                       resizeMode="cover"
                     />
+                    {!loading && (
                     <TouchableOpacity
                       style={styles.deleteButton}
                       onPress={handleDeleteImage}
                       activeOpacity={0.8}
                     >
-                      <DeleteIcon width={20} height={20} />
-                    </TouchableOpacity>
+                        <DeleteIcon width={20} height={20} />
+                      </TouchableOpacity>
+                    )}
                   </View>
                 ) : (
                   <View style={styles.uploadPlaceholder}>
@@ -185,7 +187,7 @@ const ThumbnilUploadModal = ({ visible, onClose, onConfirm, uploadFunction ,load
                 </Text>
                 )}
               </TouchableOpacity>
-              
+              {!loading && (
               <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={handleClose}
@@ -193,6 +195,7 @@ const ThumbnilUploadModal = ({ visible, onClose, onConfirm, uploadFunction ,load
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

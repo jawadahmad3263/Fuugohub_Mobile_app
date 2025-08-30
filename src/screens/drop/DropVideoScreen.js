@@ -27,6 +27,7 @@ import ThumbnilUploadModal from "./component/ThumbnilUploadModal";
 import { Post, PostFormData } from "../../services/api";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from "@react-navigation/native";
+import Spacing from "../../components/common/Spacing";
 
 const { width, height } = Dimensions.get("window");
 
@@ -590,15 +591,7 @@ const DropVideoScreen = () => {
 
       {/* Top Controls */}
       <View style={styles.topControls}>
-        <View style={styles.statusBar}>
-          <Text style={styles.timeText}>12:22</Text>
-          <View style={styles.statusIcons}>
-            <View style={styles.signalIcon} />
-            <View style={styles.wifiIcon} />
-            <View style={styles.batteryIcon} />
-          </View>
-        </View>
-
+       
         <View style={styles.addSoundButton}>
           <Text style={styles.addSoundText}>🎵 Add sound</Text>
         </View>
@@ -728,7 +721,7 @@ const styles = StyleSheet.create({
   },
   topControls: {
     position: "absolute",
-    top: 0,
+    top: 60,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -847,7 +840,7 @@ const styles = StyleSheet.create({
   },
   flipButton: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 100 : 80,
+    top: Platform.OS === "ios" ? 100 : 100,
     right: 20,
     width: 44,
     height: 44,

@@ -30,6 +30,7 @@ import { getUserToken, getVerificationToken, setUserToken } from "../../utils/co
 import { Post } from "../../services/api";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/slices/userSlice";
+import AppleAuthService from "../../services/appleAuthService";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -172,6 +173,72 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const handleAppleLogin = async () => {
+    if(loading) return;
+    
+    try {
+      setLoading(true);
+      
+      // Perform Apple Sign-In
+      const result = await AppleAuthService.signIn();
+      
+      if (!result.success) {
+        setLoading(false);
+        if (result.code === 'CANCELLED') {
+          // User cancelled, no need to show error
+          return;
+        }
+        Alert.alert('Apple Sign-In Error', result.error);
+        return;
+      }
+
+      const { identityToken, email, firstName, lastName, user } = result.data;
+      
+      console.log('Apple Sign-In Success:', result.data);
+       
+    
+      // Send the identity token to your backend for verification
+      const data = {
+        access_token: identityToken,
+       
+      };
+      
+      // Call your backend API with Apple credentials
+      Post({endpoint: 'auth/apple', data: data})
+        .then(async(res) => {
+          console.log('Apple Login Response:', JSON.stringify(res));
+          
+          const token = res?.data?.token;
+          await setUserToken(token);
+          setLoading(false);
+          
+          if(res?.data?.action == 'signup'){
+            navigation.navigate('AccountDetails',{
+              email: email,
+              firstName: firstName,
+              lastName: lastName,
+              action: res?.data?.action
+            });
+            return;
+          }
+          
+          navigation.navigate('Splash');
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.alert('Try Again please', err?.response?.data?.message || 'Apple login failed');
+          console.log('Apple Login Error:', JSON.stringify(err));
+        });
+        
+    } catch (error) {
+      setLoading(false);
+      console.log('Apple Sign-In Error:', error);
+      Alert.alert('Error', 'Apple sign in failed. Please try again.');
+    }
+  };
+
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -269,6 +336,18 @@ const LoginScreen = ({ navigation }) => {
                   style={styles.socialIcon}
                 />
               </TouchableOpacity>
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity onPress={handleAppleLogin}>
+                  <Image
+                    source={require("../../assets/images/apple.png")}
+                    style={[styles.socialIcon,{
+                      height:25,
+                      width:25,
+                      transform:[{translateY: 5}]
+                    }]}
+                  />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity>
                 <Image
                   source={require("../../assets/images/facebook-icon.png")}
