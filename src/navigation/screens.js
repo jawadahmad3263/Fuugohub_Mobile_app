@@ -27,6 +27,7 @@ import OtpVerification from '../screens/auth/OtpVerification';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 import ResetPasswordOtpScreen from '../screens/auth/ResetPasswordOtpScreen';
 import Splash from '../screens/splash/Splash';
+import DropVideoScreen from '../screens/drop/DropVideoScreen';
 
 // Auth screen names and components
 export const AUTH_SCREENS = {
@@ -156,4 +157,12 @@ export const APP_SCREENS = {
     component: ProductDetailsScreen,
     title: 'Product Details',
   },
+DROP_VIDEO_SCREEN:{
+  name :'DropVideoScreen',
+  component: DropVideoScreen,
+  title: 'Drop Video',
+  options: {
+    headerShown: false,
+  },
+}
 };

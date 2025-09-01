@@ -9,12 +9,15 @@ import FollowersTab from './components/FollowersTab'
 import FollowingsTab from './components/FollowingsTab'
 import LikedTab from './components/LikedTab'
 import { useFocusEffect, useRoute } from '@react-navigation/native'
+import EditProfileIcon from "../../assets/svg/edit-profile-icon.svg";
+import ProfileUpdateModal from './components/ProfileUpdateModal'
 
 const PersonalProfile = ({ navigation }) => {
   const route = useRoute()
   const [activeTab, setActiveTab] = useState('My Drops')
   const [userProfile,setUserProfile] = useState(null)
   const tabs = ['My Drops', 'Followers', 'Followings', 'Liked']
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false)
   useFocusEffect(
     React.useCallback(() => {
       handleRouteValue()
@@ -29,7 +32,10 @@ const PersonalProfile = ({ navigation }) => {
     console.warn('user', user)
     setUserProfile(user)
   }
-
+  const onEditProfilePress = () => {
+    // navigation.navigate(APP_SCREENS.EDIT_PROFILE.name)
+    setIsUpdateModalVisible(true)
+  }
   return (
     <View style={[Style.container]}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -48,7 +54,13 @@ const PersonalProfile = ({ navigation }) => {
         <Spacing val={10}/>
         <View>
         <View style={styles.userProfileSection}>
+        <TouchableOpacity 
+        onPress={onEditProfilePress}
+         style={styles.editProfileIconContainer}>
+                <EditProfileIcon/>
+              </TouchableOpacity>
           <View style={styles.avatarContainer}>
+      
             {/* <UserProfileAvatar width={120} height={120} /> */}
             {userProfile?.profileImage ? <Image source={{uri:userProfile?.profileImage}} style={{width:120,height:120,borderRadius:100}} resizeMode='cover' /> : <UserProfileAvatar width={120} height={120} />}
 
@@ -85,6 +97,11 @@ const PersonalProfile = ({ navigation }) => {
         {activeTab === 'Followings' && <FollowingsTab />}
         {activeTab === 'Liked' && <LikedTab />}
         <Spacing val={350}/>
+        <ProfileUpdateModal
+          visible={isUpdateModalVisible}
+          onClose={() => setIsUpdateModalVisible(false)}
+          onSave={() => {}}
+        />
       </ScrollView>
     </View>
   )
@@ -242,4 +259,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+  editProfileIconContainer:{
+    position:'absolute',
+    top:10,
+    right:15,
+  
+   
+  }
 })

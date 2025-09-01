@@ -17,7 +17,7 @@ const Splash = ({ navigation }) => {
         userToken();
       }, 1000);
 
-      // navigation.navigate('AccountDetails')
+      // navigation.navigate('Main')
     }, [])
   );
 
@@ -43,6 +43,16 @@ const Splash = ({ navigation }) => {
        const user = res?.data?.user
        dispatch(setUser(user))
     //    navigation.navigate("Main");
+    if(!user?.phoneNumber){
+      navigation.navigate("AccountDetails",{
+        email:user?.email,
+        firstName:user?.firstName,
+        lastName:user?.lastName,
+        action:'signup'
+      })
+      return
+    }
+    
        navigation.reset({
         index: 0,
         routes: [{ name: "Main" }],

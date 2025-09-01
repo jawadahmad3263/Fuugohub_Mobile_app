@@ -18,6 +18,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CustomTextInput from "../../components/forms/TextInput";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedExports";
@@ -25,10 +26,11 @@ import COLORS from "../../style/colors";
 import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
 import { getUserToken, getVerificationToken, setUserToken } from "../../utils/common";
-import { useFocusEffect } from "@react-navigation/native";
+
 import { Post } from "../../services/api";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/slices/userSlice";
+import AppleAuthService from "../../services/appleAuthService";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,13 +43,7 @@ const LoginScreen = ({ navigation }) => {
 
   const dispatch = useDispatch()
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // userToken()
-      // navigation.navigate('ImageUploadScreen')
-    
-    }, [])
-  );
+
 
  
   const userToken = async () => {
@@ -110,6 +106,138 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false)
     })
   }
+
+  const handleGoogleLogin = async () => {
+    if(loading) return;
+    try {
+      setLoading(true);
+      
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices();
+      
+      // Sign in
+      const userInfo = await GoogleSignin.signIn();
+
+      const user = userInfo?.data?.user
+      
+      console.log('Google Sign-In Success:', userInfo);
+      console.log('user', user)
+      const { accessToken, idToken } = await GoogleSignin.getTokens()
+      // Extract user data
+      // const { user, idToken } = userInfo?.data;
+      // const idToken = userInfo?.data?.idToken;
+      console.log('idToken', idToken)
+      console.log('accessToken', accessToken)
+      // Send the ID token to your backend for verification
+      const data = {
+     
+        access_token: accessToken,
+      };
+      
+      // Call your backend API with Google credentials
+      Post({endpoint: 'auth/google', data: data})
+        .then(async(res) => {
+          console.log('Google Login Response:', JSON.stringify(res));
+          
+          const token = res?.data?.token;
+          await setUserToken(token);
+          setLoading(false);
+          if(res?.data?.action =='signup'){
+            navigation.navigate('AccountDetails',{
+              email:user?.email,
+              firstName:user?.givenName,
+              lastName:user?.familyName,
+              action:res?.data?.action
+            });
+            return
+          }
+          navigation.navigate('Splash');
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.alert('Error', err?.response?.data?.message || 'Google login failed');
+          console.log('Google Login Error:', JSON.stringify(err));
+        });
+        
+    } catch (error) {
+      setLoading(false);
+      console.log('Google Sign-In Error:', error);
+      
+      if (error.code === 'SIGN_IN_CANCELLED') {
+        Alert.alert('Sign In Cancelled', 'You cancelled the sign in process');
+      } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+        Alert.alert('Error', 'Google Play Services not available');
+      } else {
+        Alert.alert('Error', 'Google sign in failed. Please try again.');
+      }
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    if(loading) return;
+    
+    try {
+      setLoading(true);
+      
+      // Perform Apple Sign-In
+      const result = await AppleAuthService.signIn();
+      
+      if (!result.success) {
+        setLoading(false);
+        if (result.code === 'CANCELLED') {
+          // User cancelled, no need to show error
+          return;
+        }
+        Alert.alert('Apple Sign-In Error', "Try Again");
+        return;
+      }
+
+      const { identityToken, email, firstName, lastName, user } = result.data;
+      
+      console.log('Apple Sign-In Success:', result.data);
+       
+    
+      // Send the identity token to your backend for verification
+      const data = {
+        identityToken: identityToken,
+       
+      };
+      
+      // Call your backend API with Apple credentials
+      Post({endpoint: 'auth/apple', data: data})
+        .then(async(res) => {
+          console.log('Apple Login Response:', JSON.stringify(res));
+          
+          const token = res?.data?.token;
+          await setUserToken(token);
+          setLoading(false);
+          
+          if(res?.data?.action == 'signup'){
+            navigation.navigate('AccountDetails',{
+              email: email,
+              firstName: firstName,
+              lastName: lastName,
+              action: res?.data?.action
+            });
+            return;
+          }
+          
+          navigation.navigate('Splash');
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.alert('Try Again please', err?.response?.data?.message || 'Apple login failed');
+          console.log('Apple Login Error:', JSON.stringify(err));
+        });
+        
+    } catch (error) {
+      setLoading(false);
+      console.log('Apple Sign-In Error:', error);
+      Alert.alert('Error', 'Apple sign in failed. Please try again.');
+    }
+  };
+
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -202,12 +330,24 @@ const LoginScreen = ({ navigation }) => {
             </View>
             <Spacing type="v" val={20} />
             <View style={styles.socialRow}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleGoogleLogin}>
                 <Image
                   source={require("../../assets/images/google-icon.png")}
                   style={styles.socialIcon}
                 />
               </TouchableOpacity>
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity onPress={handleAppleLogin}>
+                  <Image
+                    source={require("../../assets/images/apple.png")}
+                    style={[styles.socialIcon,{
+                      height:25,
+                      width:25,
+                      transform:[{translateY: 5}]
+                    }]}
+                  />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity>
                 <Image
                   source={require("../../assets/images/facebook-icon.png")}

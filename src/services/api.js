@@ -194,6 +194,7 @@ export const PostFormData = async ({ endpoint, data }) => {
                     'Access-Control-Allow-Credentials': 'true',
                     'Accept-Language': 'en',
                 },
+                timeout: 30000, // 30 second timeout
                 transformRequest: (data_, headers) => {
                     console.log(endpoint, data)
                     return data
@@ -205,6 +206,12 @@ export const PostFormData = async ({ endpoint, data }) => {
             })
             .catch((error) => {
                 console.log(endpoint, error)
+                if (error.code === 'ECONNABORTED') {
+                    console.log('Request timeout')
+                }
+                if (error.message === 'Network Error') {
+                    console.log('Network error - check internet connection')
+                }
                 reject(error)
             })
     })

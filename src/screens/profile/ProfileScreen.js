@@ -36,7 +36,7 @@ import { Get } from "../../services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import Style from "../../style/Style";
 import BackIcon from "../../assets/svg/back-arrow-white.svg";
-
+import EditProfileIcon from "../../assets/svg/edit-profile-icon.svg";
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
@@ -154,6 +154,7 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.userSection}>
             <View style={styles.avatarContainer}>
               {/* <UserProfileAvatar width={60} height={60} /> */}
+        
               {userProfile?.profileImage ? (
                 <Image
                   source={{ uri: userProfile?.profileImage }}

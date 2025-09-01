@@ -153,7 +153,7 @@ const ImageUploadScreen = ({ navigation }) => {
       setLoading(false)
       navigation.reset({
         index: 0,
-        routes: [{ name: "Main" }],
+        routes: [{ name: "Splash" }],
       });
     }).catch((err)=>{
       setLoading(false)

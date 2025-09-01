@@ -19,6 +19,7 @@ import {
   Keyboard,
   Image,
 } from "react-native";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CustomTextInput from "../../components/forms/TextInput";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedExports";
@@ -27,12 +28,16 @@ import Style from "../../style/Style";
 import Spacing from "../../components/common/Spacing";
 import { Post } from "../../services/api";
 import { setVerificationToken, validateEmail } from "../../utils/common";
- const RegisterScreen = ({ navigation }) => {
+
+const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+
+
 const handleStart = async () => {
 
   
@@ -60,6 +65,68 @@ if(!validateEmail(email)){
     setLoading(false)
   })  
 }
+
+const handleGoogleSignup = async () => {
+  try {
+    setLoading(true);
+    
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices();
+    
+    // Sign in
+    const userInfo = await GoogleSignin.signIn();
+    
+    console.log('Google Sign-Up Success:', userInfo);
+    
+    // Extract user data
+    const { user, idToken } = userInfo;
+    
+    // Send the ID token to your backend for registration
+    const data = {
+      googleIdToken: idToken,
+      email: user.email,
+      name: user.name,
+      photo: user.photo,
+    };
+    
+    // Call your backend API with Google credentials for registration
+    Post({endpoint: '/auth/google-signup', data: data})
+      .then(async(res) => {
+        console.log('Google Signup Response:', JSON.stringify(res));
+        
+        if (res?.data?.verificationToken) {
+          await setVerificationToken(res?.data?.verificationToken);
+          navigation.navigate('OtpVerification', {
+            email: user.email, 
+            verificationToken: res?.data?.verificationToken
+          });
+        } else if (res?.data?.token) {
+          // If user is already registered, navigate to main
+          navigation.navigate('Main');
+        } else {
+          Alert.alert('Error', res?.message || 'Google signup failed');
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        Alert.alert('Error', err?.response?.data?.message || 'Google signup failed');
+        console.log('Google Signup Error:', JSON.stringify(err));
+      });
+      
+  } catch (error) {
+    setLoading(false);
+    console.log('Google Sign-In Error:', error);
+    
+    if (error.code === 'SIGN_IN_CANCELLED') {
+      Alert.alert('Sign In Cancelled', 'You cancelled the sign in process');
+    } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+      Alert.alert('Error', 'Google Play Services not available');
+    } else {
+      Alert.alert('Error', 'Google sign in failed. Please try again.');
+    }
+  }
+};
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -147,7 +214,7 @@ if(!validateEmail(email)){
             </View>
             <Spacing type="v" val={20} />
             <View style={styles.socialRow}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleGoogleSignup}>
                 <Image
                   source={require("../../assets/images/google-icon.png")}
                   style={styles.socialIcon}
