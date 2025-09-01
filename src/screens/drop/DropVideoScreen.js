@@ -265,8 +265,8 @@ const DropVideoScreen = () => {
     console.log("drops/upload");
     const endPoint = "drops/upload";
     const data = {
-      "temp-drops": "",
-      "temp-drops-cover-images": "",
+      "drops": "",
+      "drops-cover-images": "",
     };
     const formData = createFormData(data);
     console.log("form", formData);
@@ -425,7 +425,7 @@ const DropVideoScreen = () => {
     // Add video file with proper structure
     if (recordedVideo && recordedVideo?.path) {
       formData.append(
-        "temp-drops",
+        "drops",
         {
           uri: recordedVideo.path.startsWith("file://")
             ? recordedVideo.path
@@ -440,7 +440,7 @@ const DropVideoScreen = () => {
     // Add image file with proper structure
     if (image && image.uri) {
       formData.append(
-        "temp-drops-cover-images",
+        "drops-cover-images",
         {
           uri: image.uri,
           type: image.type || "image/jpeg",
