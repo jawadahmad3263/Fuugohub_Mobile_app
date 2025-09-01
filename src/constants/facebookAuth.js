@@ -1,0 +1,7 @@
+export const FACEBOOK_AUTH_CONFIG = {
+  APP_ID: 'YOUR_FB_APP_ID',
+  CLIENT_TOKEN: 'YOUR_FB_CLIENT_TOKEN',
+};
+
+
+

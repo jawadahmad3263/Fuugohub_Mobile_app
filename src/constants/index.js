@@ -4,3 +4,4 @@
  */
 
 export * from './googleAuth';
+export * from './facebookAuth';

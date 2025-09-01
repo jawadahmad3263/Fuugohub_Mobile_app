@@ -5520,6 +5520,7 @@ __metadata:
     react-native: 0.80.0
     react-native-create-thumbnail: ^2.1.1
     react-native-dropdown-picker: ^5.4.6
+    react-native-fbsdk-next: ^13.4.1
     react-native-image-picker: ^8.2.1
     react-native-linear-gradient: ^2.8.3
     react-native-permissions: ^5.4.2
@@ -8513,6 +8514,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: d81ee3d68c17107a4d21dbdf9c2fe2ffe4bf4398973d10113139aadc0674221ce5038b945299fba2abc796930ec5e6d5f84291945bf903344493a15b8e2fca43
+  languageName: node
+  linkType: hard
+
+"react-native-fbsdk-next@npm:^13.4.1":
+  version: 13.4.1
+  resolution: "react-native-fbsdk-next@npm:13.4.1"
+  peerDependencies:
+    expo: ">=47.0.0"
+    react-native: ">=0.63.3"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: e8f0f470009485c48e17279b1dfe8e6f94303de52394ce579fb888518a694b79f741a060d957b097534003abb07827e03955203b55101c333ba07bf8f5d307b1
   languageName: node
   linkType: hard
 

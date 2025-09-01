@@ -19,6 +19,7 @@ import {
   Alert,
 } from "react-native";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import FacebookAuthService from "../../services/facebookAuthService";
 import CustomTextInput from "../../components/forms/TextInput";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import { Color } from "react-native/types_generated/Libraries/Animated/AnimatedExports";
@@ -237,6 +238,45 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const handleFacebookLogin = async () => {
+    if (loading) return;
+    try {
+      setLoading(true);
+      const result = await FacebookAuthService.signIn();
+      if (!result.success) {
+        setLoading(false);
+        if (result.code === 'CANCELLED') return;
+        Alert.alert('Facebook Sign-In Error', 'Try again');
+        return;
+      }
+      const { accessToken, firstName, lastName } = result.data;
+      const data = { access_token: accessToken };
+      Post({ endpoint: 'auth/facebook', data })
+        .then(async (res) => {
+          const token = res?.data?.token;
+          await setUserToken(token);
+          setLoading(false);
+          if (res?.data?.action == 'signup') {
+            navigation.navigate('AccountDetails', {
+              email: undefined,
+              firstName: firstName,
+              lastName: lastName,
+              action: res?.data?.action,
+            });
+            return;
+          }
+          navigation.navigate('Splash');
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.alert('Error', err?.response?.data?.message || 'Facebook login failed');
+        });
+    } catch (error) {
+      setLoading(false);
+      Alert.alert('Error', 'Facebook sign in failed. Please try again.');
+    }
+  };
+
 
 
   return (
@@ -348,7 +388,7 @@ const LoginScreen = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               )}
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleFacebookLogin}>
                 <Image
                   source={require("../../assets/images/facebook-icon.png")}
                   style={styles.socialIcon}
